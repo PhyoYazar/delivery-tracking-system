@@ -1,0 +1,24 @@
+name: main-branch-pr-checker
+run-name: ${{ github.actor }} is checking PR 🚀
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, review_requested]
+    branches: main
+
+jobs:
+  LintAndBuild:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - run: npm i
+      - name: 🔎 linting...
+        run: npm run lint:ci
+      - name: echo "🏗 test building..."
+        run: npm run build:ci
