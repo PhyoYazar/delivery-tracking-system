@@ -6,7 +6,9 @@
     "build": "next build",
     "dev": "next dev",
     "lint": "next lint",
-    "start": "next start"
+    "start": "next start",
+    "build:ci": "cross-env SKIP_ENV_VALIDATION=true npm run build",
+    "lint:ci": "cross-env SKIP_ENV_VALIDATION=true npm run lint -- --max-warnings=0"
   },
   "dependencies": {
     "@emotion/react": "^11.11.1",
@@ -18,13 +20,16 @@
     "@mantine/notifications": "^6.0.15",
     "@mantine/nprogress": "^6.0.15",
     "@t3-oss/env-nextjs": "^0.3.1",
+    "@tabler/icons-react": "^2.23.0",
     "@tanstack/react-query": "^4.29.7",
     "@trpc/client": "^10.26.0",
     "@trpc/next": "^10.26.0",
     "@trpc/react-query": "^10.26.0",
     "@trpc/server": "^10.26.0",
+    "install": "^0.13.0",
     "next": "^13.4.2",
     "next-auth": "^4.22.1",
+    "npm": "^9.7.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "superjson": "1.12.2",
