@@ -11,7 +11,12 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@mantine/core": "^6.0.14",
+    "@mantine/form": "^6.0.15",
     "@mantine/hooks": "^6.0.14",
+    "@mantine/modals": "^6.0.15",
+    "@mantine/next": "^6.0.15",
+    "@mantine/notifications": "^6.0.15",
+    "@mantine/nprogress": "^6.0.15",
     "@t3-oss/env-nextjs": "^0.3.1",
     "@tanstack/react-query": "^4.29.7",
     "@trpc/client": "^10.26.0",
