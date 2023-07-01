@@ -1,5 +1,6 @@
 import { Box, Center, Title } from '@mantine/core';
 import Head from 'next/head';
+import InfoCard from '~/feature/user/InfoCard';
 
 export default function Home() {
 	// const hello = api.example.hello.useQuery({ text: 'from tRPC' });
@@ -15,6 +16,8 @@ export default function Home() {
 			<Box w='100vw' h='100vh'>
 				<Center h='100%'>
 					<Title>This is Home page</Title>
+
+					<InfoCard />
 				</Center>
 			</Box>
 		</>
