@@ -8,7 +8,7 @@ import {
 } from '@mantine/core';
 import { IconAffiliateFilled } from '@tabler/icons-react';
 
-const InfoCard = () => {
+export const InfoCard = () => {
 	const theme = useMantineTheme();
 
 	return (
@@ -24,5 +24,3 @@ const InfoCard = () => {
 		</Card>
 	);
 };
-
-export default InfoCard;
