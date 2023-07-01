@@ -1,19 +1,19 @@
 {
-  "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "dotenv.enableAutocloaking": false,
-  "cSpell.words": [
-    "CLIENTVAR",
-    "mantine",
-    "NEXTAUTH",
-    "nextjs",
-    "tanstack",
-    "tailwindcss",
-    "superjson",
-    "trpc"
-  ],
-  "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "typescript.tsdk": "node_modules/typescript/lib"
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"dotenv.enableAutocloaking": false,
+	"cSpell.words": [
+		"CLIENTVAR",
+		"mantine",
+		"NEXTAUTH",
+		"nextjs",
+		"tanstack",
+		"tailwindcss",
+		"superjson",
+		"trpc"
+	],
+	"[jsonc]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"typescript.tsdk": "node_modules/typescript/lib"
 }
