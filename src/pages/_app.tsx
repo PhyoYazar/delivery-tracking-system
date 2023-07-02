@@ -29,6 +29,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
 	const layoutIgnoreRoutes = [
 		'/',
 
+		'/delivery',
+
 		'/admin/profile',
 		'/admin/create-deli-employee',
 

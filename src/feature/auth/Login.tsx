@@ -1,4 +1,12 @@
-import { Box, Button, PasswordInput, Stack, TextInput } from '@mantine/core';
+import {
+	Box,
+	Button,
+	Center,
+	Stack,
+	Text,
+	TextInput,
+	Title,
+} from '@mantine/core';
 import { useRouter } from 'next/router';
 
 export const Login = () => {
@@ -6,7 +14,7 @@ export const Login = () => {
 
 	return (
 		<Box
-			w={300}
+			w={380}
 			p={24}
 			sx={(theme) => ({
 				boxShadow: theme.shadows.md,
@@ -15,12 +23,29 @@ export const Login = () => {
 			})}
 		>
 			<Stack spacing={20}>
-				<TextInput placeholder='Your email' label='Email' />
-				<PasswordInput placeholder='Password' label='Password' />
+				<Title order={3}>Search Your Products</Title>
+
+				{/* <TextInput placeholder='Your email' label='Email' /> */}
+				{/* <PasswordInput placeholder='Password' label='Password' /> */}
+
+				<Stack>
+					<TextInput placeholder='username' label='Username' withAsterisk />
+					<TextInput
+						placeholder='09783432122'
+						label='Phone Number'
+						withAsterisk
+					/>
+				</Stack>
 
 				<Button color='orange' onClick={() => void router.push('/')}>
-					Login
+					Search
 				</Button>
+
+				<Center>
+					<Text fz='xs' fw={700} color='gray.6'>
+						Login as Admin
+					</Text>
+				</Center>
 			</Stack>
 		</Box>
 	);

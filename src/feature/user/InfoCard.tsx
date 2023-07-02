@@ -3,7 +3,7 @@ import { IconAffiliateFilled } from '@tabler/icons-react';
 
 export const InfoCard = () => {
 	return (
-		<Card shadow='sm' padding='lg' radius='md' withBorder>
+		<Card shadow='sm' padding='lg' radius='md' withBorder w={500}>
 			<Group align='flex-start' noWrap>
 				<IconAffiliateFilled size={40} />
 
