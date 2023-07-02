@@ -1,5 +1,15 @@
-import { Box, Center, ScrollArea, Stack, Title } from '@mantine/core';
+import {
+	Box,
+	Button,
+	Center,
+	Group,
+	ScrollArea,
+	Stack,
+	Title,
+	Tooltip,
+} from '@mantine/core';
 import Head from 'next/head';
+import Link from 'next/link';
 import { InfoCard } from '~/feature/user/InfoCard';
 
 export default function Home() {
@@ -14,19 +24,31 @@ export default function Home() {
 			</Head>
 
 			<Box w='100vw' h='100vh'>
-				<Center h='100%'>
-					<Stack>
-						<Title>This is Home page</Title>
+				<Stack h='100%'>
+					<Group m={20}>
+						<Button component={Link} href='/admin/active-trucks'>
+							Go Admin
+						</Button>
 
-						<ScrollArea h={'50vh'} type='hover' offsetScrollbars>
-							<Stack>
-								{[1, 2, 3, 4, 5, 6].map((el) => (
-									<InfoCard key={el} />
-								))}
-							</Stack>
-						</ScrollArea>
-					</Stack>
-				</Center>
+						<Tooltip label='Working in progress'>
+							<Button>Go Delivery</Button>
+						</Tooltip>
+					</Group>
+
+					<Center>
+						<Stack>
+							<Title>This is Home page</Title>
+
+							<ScrollArea h={'50vh'} type='hover' offsetScrollbars>
+								<Stack>
+									{[1, 2, 3, 4, 5, 6].map((el) => (
+										<InfoCard key={el} />
+									))}
+								</Stack>
+							</ScrollArea>
+						</Stack>
+					</Center>
+				</Stack>
 			</Box>
 		</>
 	);

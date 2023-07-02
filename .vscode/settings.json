@@ -10,7 +10,8 @@
 		"tanstack",
 		"tailwindcss",
 		"superjson",
-		"trpc"
+		"trpc",
+		"tabler"
 	],
 	"[jsonc]": {
 		"editor.defaultFormatter": "esbenp.prettier-vscode"

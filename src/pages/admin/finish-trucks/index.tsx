@@ -160,7 +160,7 @@ const defaultData: Person[] = [
 	},
 ];
 
-const CustomersPage = () => {
+const FinishTrucksPage = () => {
 	const defaultColumns: ColumnDef<Person>[] = useMemo(
 		() => [
 			{
@@ -251,7 +251,7 @@ const CustomersPage = () => {
 
 	return (
 		<Stack>
-			<Text>CustomersPage</Text>
+			<Text>Finish Delivery Trucks</Text>
 
 			<Table
 				data={defaultData}
@@ -263,4 +263,4 @@ const CustomersPage = () => {
 	);
 };
 
-export default CustomersPage;
+export default FinishTrucksPage;

@@ -10,12 +10,12 @@ import { useRouter } from 'next/router';
 
 const navigationItems = [
 	{
-		href: '/admin/active-truck',
+		href: '/admin/active-trucks',
 		label: 'Active Delivery Trucks',
 		icon: IconTruckDelivery,
 	},
 	{
-		href: '/admin/finish-truck',
+		href: '/admin/finish-trucks',
 		label: 'Finish Delivery Trucks',
 		icon: IconTruckOff,
 	},
