@@ -256,6 +256,7 @@ const ActiveTrucksPage = () => {
 			<Table
 				data={defaultData}
 				columns={defaultColumns}
+				withBorder
 				disabledRowClickDetail
 			/>
 		</Stack>

@@ -256,6 +256,7 @@ const FinishTrucksPage = () => {
 			<Table
 				data={defaultData}
 				columns={defaultColumns}
+				withBorder
 				disabledRowClickDetail
 			/>
 		</Stack>

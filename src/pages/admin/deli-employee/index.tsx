@@ -256,6 +256,7 @@ const DeliEmployeePage = () => {
 			<Table
 				data={defaultData}
 				columns={defaultColumns}
+				withBorder
 				disabledRowClickDetail
 			/>
 		</Stack>

@@ -113,6 +113,7 @@ export function Table<D>({
 				border: withBorder ? `1px solid ${theme.colors.gray[3]}` : undefined,
 				backgroundColor: theme.white,
 				boxShadow: theme.shadows.md,
+				padding: `0 ${theme.spacing.sm}`,
 			})}
 		>
 			<MantineTable
