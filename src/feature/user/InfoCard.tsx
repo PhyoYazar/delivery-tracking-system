@@ -1,18 +1,9 @@
-import {
-	Badge,
-	Card,
-	Group,
-	Stack,
-	Text,
-	useMantineTheme,
-} from '@mantine/core';
+import { Badge, Card, Group, Stack, Text } from '@mantine/core';
 import { IconAffiliateFilled } from '@tabler/icons-react';
 
 export const InfoCard = () => {
-	const theme = useMantineTheme();
-
 	return (
-		<Card>
+		<Card shadow='sm' padding='lg' radius='md' withBorder>
 			<Group align='flex-start' noWrap>
 				<IconAffiliateFilled size={40} />
 

@@ -1,4 +1,4 @@
-import { Box, Center, Stack, Title } from '@mantine/core';
+import { Box, Center, ScrollArea, Stack, Title } from '@mantine/core';
 import Head from 'next/head';
 import { InfoCard } from '~/feature/user/InfoCard';
 
@@ -18,9 +18,13 @@ export default function Home() {
 					<Stack>
 						<Title>This is Home page</Title>
 
-						{[1, 2, 4].map((el) => (
-							<InfoCard key={el} />
-						))}
+						<ScrollArea h={'50vh'} type='hover' offsetScrollbars>
+							<Stack>
+								{[1, 2, 3, 4, 5, 6].map((el) => (
+									<InfoCard key={el} />
+								))}
+							</Stack>
+						</ScrollArea>
 					</Stack>
 				</Center>
 			</Box>
