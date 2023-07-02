@@ -3,7 +3,6 @@ import {
 	IconCirclePlus,
 	IconLogout,
 	IconUserCircle,
-	IconUserSearch,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 
@@ -21,20 +20,28 @@ export const NavHeader = () => {
 			<Menu shadow='md' width={260} position='bottom-end'>
 				<Menu.Target>
 					<ActionIcon>
-						<IconUserSearch size={40} />
+						<IconUserCircle size={40} />
 					</ActionIcon>
 				</Menu.Target>
 
 				<Menu.Dropdown>
 					<Menu.Label>Application</Menu.Label>
-					<Menu.Item color='gray.9' icon={<IconCirclePlus size={20} />}>
+					<Menu.Item
+						color='gray.9'
+						icon={<IconCirclePlus size={20} />}
+						onClick={() => void router.push('/admin/create-deli-employee')}
+					>
 						Create Delivery Employee
 					</Menu.Item>
 
 					<Menu.Divider />
 
 					<Menu.Label>Account Settings</Menu.Label>
-					<Menu.Item color='gray.9' icon={<IconUserCircle size={20} />}>
+					<Menu.Item
+						color='gray.9'
+						icon={<IconUserCircle size={20} />}
+						onClick={() => void router.push('/admin/profile')}
+					>
 						Profile
 					</Menu.Item>
 					<Menu.Item
