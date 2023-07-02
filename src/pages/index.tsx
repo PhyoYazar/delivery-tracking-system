@@ -1,6 +1,6 @@
-import { Box, Center, Title } from '@mantine/core';
+import { Box, Center, ScrollArea, Stack, Title } from '@mantine/core';
 import Head from 'next/head';
-import InfoCard from '~/feature/user/InfoCard';
+import { InfoCard } from '~/feature/user/InfoCard';
 
 export default function Home() {
 	// const hello = api.example.hello.useQuery({ text: 'from tRPC' });
@@ -15,9 +15,17 @@ export default function Home() {
 
 			<Box w='100vw' h='100vh'>
 				<Center h='100%'>
-					<Title>This is Home page</Title>
+					<Stack>
+						<Title>This is Home page</Title>
 
-					<InfoCard />
+						<ScrollArea h={'50vh'} type='hover' offsetScrollbars>
+							<Stack>
+								{[1, 2, 3, 4, 5, 6].map((el) => (
+									<InfoCard key={el} />
+								))}
+							</Stack>
+						</ScrollArea>
+					</Stack>
 				</Center>
 			</Box>
 		</>
