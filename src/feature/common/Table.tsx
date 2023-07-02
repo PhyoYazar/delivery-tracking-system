@@ -52,7 +52,7 @@ export function Table<D>({
 	columns,
 	withBorder = false,
 	containerWidth = '99.9%',
-	containerHeight,
+	containerHeight = 'calc(100vh - 150px)',
 	autoColumnWidth = false,
 	disabledRowClickDetail = false,
 	onRowClick,
@@ -113,7 +113,7 @@ export function Table<D>({
 				border: withBorder ? `1px solid ${theme.colors.gray[3]}` : undefined,
 				backgroundColor: theme.white,
 				boxShadow: theme.shadows.md,
-				padding: `0 ${theme.spacing.sm}`,
+				padding: theme.spacing.sm,
 			})}
 		>
 			<MantineTable
@@ -126,15 +126,9 @@ export function Table<D>({
 			>
 				<thead>
 					{table.getHeaderGroups().map((headerGroup) => (
-						<tr key={headerGroup.id}>
+						<tr key={headerGroup.id} style={{ minWidth: 200 }}>
 							{headerGroup.headers.map((header) => (
-								<th
-									key={header.id}
-									colSpan={header.colSpan}
-									style={{
-										width: header.getSize(),
-									}}
-								>
+								<th key={header.id} colSpan={header.colSpan}>
 									{header.isPlaceholder
 										? null
 										: flexRender(

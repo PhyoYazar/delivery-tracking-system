@@ -3,184 +3,112 @@ import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo, type ReactNode } from 'react';
 import { Table } from '~/feature/common/Table';
 
-type Person = {
+type Truck = {
 	id: string;
-	firstName: string;
-	lastName: string;
-	age: number;
-	visits: number;
-	status: string;
-	progress: number;
-	isMarried: string;
-	bd: string;
-	town: string;
-	city: string;
+	deliveryName: string;
+	truckNo: string;
+	startDate: string;
+	phoneNumber: string;
+	latestStatus: string;
 };
 
-const defaultData: Person[] = [
+const defaultData: Truck[] = [
 	{
 		id: '1',
-		firstName: 'tanner',
-		lastName: 'linsley',
-		age: 24,
-		visits: 100,
-		status: 'In Relationship',
-		progress: 50,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
 		id: '2',
-		firstName: 'joe',
-		lastName: 'dirte',
-		age: 45,
-		visits: 20,
-		status: 'Complicated',
-		progress: 10,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
 		id: '3',
-		firstName: 'aoe',
-		lastName: 'hirte',
-		age: 45,
-		visits: 20,
-		status: 'Complicated',
-		progress: 10,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
 		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		id: '5',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		id: '6',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		id: '7',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		id: '8',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
+		id: '9',
+		deliveryName: 'Aung Kyaw Moe',
+		truckNo: 'EH5032',
+		startDate: '30/6/2023',
+		phoneNumber: '09786543234',
+		latestStatus: 'Kachin City',
 	},
 ];
 
 const ActiveTrucksPage = () => {
-	const defaultColumns: ColumnDef<Person>[] = useMemo(
+	const defaultColumns: ColumnDef<Truck>[] = useMemo(
 		() => [
 			{
-				// TODO: checkbox accessorKey should be "id"
-				accessorKey: 'firstName',
-				accessorFn: (row) => row.firstName,
+				accessorKey: 'deliveryName',
+				accessorFn: (row) => row.deliveryName,
 				header: ({ table }) => {
 					return (
-						<Group spacing={12}>
-							<Checkbox
-								size='xs'
-								checked={table.getIsAllRowsSelected()}
-								indeterminate={table.getIsSomeRowsSelected()}
-								onChange={(e) => {
-									table.getToggleAllRowsSelectedHandler()(e);
-								}}
-							/>
+						<Box w={250}>
+							<Group spacing={12} noWrap>
+								<Checkbox
+									size='xs'
+									checked={table.getIsAllRowsSelected()}
+									indeterminate={table.getIsSomeRowsSelected()}
+									onChange={(e) => {
+										table.getToggleAllRowsSelectedHandler()(e);
+									}}
+								/>
 
-							<Text mt={4}>First Name</Text>
-						</Group>
+								<Text>Delivery Name</Text>
+							</Group>
+						</Box>
 					);
 				},
 				cell: ({ getValue, row }) => (
@@ -203,43 +131,25 @@ const ActiveTrucksPage = () => {
 				),
 			},
 			{
-				id: 'lastName',
-				accessorFn: (row) => row.lastName,
+				id: 'truckNo',
+				accessorFn: (row) => row.truckNo,
 				cell: (info) => info.getValue(),
-				header: () => <Box w={200}>Last Name</Box>,
+				header: () => <Box w={200}>Truck No</Box>,
 			},
 			{
-				accessorKey: 'age',
-				header: () => 'Age',
+				accessorKey: 'startDate',
+				header: () => <Box w={180}>Start Date</Box>,
 			},
 			{
-				accessorKey: 'visits',
-				header: () => <span>Visits</span>,
+				accessorKey: 'phoneNumber',
+				header: () => <Box w={180}>Phone Number</Box>,
 			},
 			{
-				accessorKey: 'status',
-				header: 'Status',
+				accessorKey: 'latestStatus',
+				accessorFn: (row) => row.latestStatus,
+				header: () => <Box w={180}>Status</Box>,
 			},
-			{
-				accessorKey: 'progress',
-				header: () => <Box w={200}>Profile Progress</Box>,
-			},
-			{
-				accessorKey: 'isMarried',
-				header: 'Married',
-			},
-			{
-				accessorKey: 'bd',
-				header: 'Birthday',
-			},
-			{
-				accessorKey: 'town',
-				header: 'Town',
-			},
-			{
-				accessorKey: 'city',
-				header: 'City',
-			},
+
 			{
 				accessorKey: 'id',
 				header: 'Edit',

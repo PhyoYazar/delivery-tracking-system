@@ -6,14 +6,15 @@ import {
 	ScrollArea,
 	Stack,
 	Title,
-	Tooltip,
 } from '@mantine/core';
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { InfoCard } from '~/feature/user/InfoCard';
 
 export default function Home() {
 	// const hello = api.example.hello.useQuery({ text: 'from tRPC' });
+	const router = useRouter();
 
 	return (
 		<>
@@ -30,16 +31,21 @@ export default function Home() {
 							Go Admin
 						</Button>
 
-						<Tooltip label='Working in progress'>
-							<Button>Go Delivery</Button>
-						</Tooltip>
+						<Button component={Link} href='/delivery'>
+							Go Delivery
+						</Button>
 					</Group>
 
 					<Center>
 						<Stack>
-							<Title>This is Home page</Title>
+							<Group position='apart'>
+								<Title>This is Home page</Title>
+								<Button onClick={() => void router.push('/login')}>
+									Search Again
+								</Button>
+							</Group>
 
-							<ScrollArea h={'50vh'} type='hover' offsetScrollbars>
+							<ScrollArea h={'70vh'} type='hover' offsetScrollbars>
 								<Stack>
 									{[1, 2, 3, 4, 5, 6].map((el) => (
 										<InfoCard key={el} />
