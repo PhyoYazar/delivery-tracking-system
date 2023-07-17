@@ -10,6 +10,7 @@ import {
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import LocationTracker from '~/feature/common/LocationTracker';
 import { InfoCard } from '~/feature/user/InfoCard';
 
 export default function Home() {
@@ -35,6 +36,8 @@ export default function Home() {
 							Go Delivery
 						</Button>
 					</Group>
+
+					<LocationTracker />
 
 					<Center>
 						<Stack>
