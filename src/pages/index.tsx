@@ -1,21 +1,14 @@
-import {
-	Box,
-	Button,
-	Center,
-	Group,
-	ScrollArea,
-	Stack,
-	Title,
-} from '@mantine/core';
+import { Stack, Tabs } from '@mantine/core';
 import Head from 'next/head';
-import Link from 'next/link';
-import { useRouter } from 'next/router';
+import { useState } from 'react';
+import { StyledTabs } from '~/feature/common/CustomTabs';
 import LocationTracker from '~/feature/common/LocationTracker';
-import { InfoCard } from '~/feature/user/InfoCard';
+import { ParcelTable } from '~/feature/parcel/ParcelTable';
+import { api } from '~/utils/api';
 
 export default function Home() {
-	// const hello = api.example.hello.useQuery({ text: 'from tRPC' });
-	const router = useRouter();
+	const [activeTab, setActiveTab] = useState<string | null>('parcels');
+	const parcels = api.parcel.getAllParcels.useQuery();
 
 	return (
 		<>
@@ -25,40 +18,31 @@ export default function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 
-			<Box w='100vw' h='100vh'>
-				<Stack h='100%'>
-					<Group m={20}>
-						<Button component={Link} href='/admin/active-trucks'>
-							Go Admin
-						</Button>
+			<Stack h='100%'>
+				<LocationTracker />
 
-						<Button component={Link} href='/delivery'>
-							Go Delivery
-						</Button>
-					</Group>
+				<StyledTabs value={activeTab} onTabChange={setActiveTab}>
+					<Tabs.List>
+						<Tabs.Tab value='parcels'>Parcels Bookings</Tabs.Tab>
+						<Tabs.Tab value='pick up'>Pick up</Tabs.Tab>
+						<Tabs.Tab value='deliver'>Deliver</Tabs.Tab>
+					</Tabs.List>
 
-					<LocationTracker />
+					<Tabs.Panel value='parcels' mt={10}>
+						<ParcelTable />
+					</Tabs.Panel>
 
-					<Center>
-						<Stack>
-							<Group position='apart'>
-								<Title>This is Home page</Title>
-								<Button onClick={() => void router.push('/login')}>
-									Search Again
-								</Button>
-							</Group>
+					<Tabs.Panel value='pick up' mt={10}>
+						<ParcelTable />
+					</Tabs.Panel>
 
-							<ScrollArea h={'70vh'} type='hover' offsetScrollbars>
-								<Stack>
-									{[1, 2, 3, 4, 5, 6].map((el) => (
-										<InfoCard key={el} />
-									))}
-								</Stack>
-							</ScrollArea>
-						</Stack>
-					</Center>
-				</Stack>
-			</Box>
+					<Tabs.Panel value='deliver' mt={10}>
+						<ParcelTable />
+					</Tabs.Panel>
+				</StyledTabs>
+
+				<pre>{JSON.stringify(parcels, null, 3)}</pre>
+			</Stack>
 		</>
 	);
 }

@@ -1,7 +1,7 @@
-import { Box, Button, Checkbox, Flex, Group, Stack, Text } from '@mantine/core';
+import { Box, Button, Checkbox, Flex, Group, Text } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo, type ReactNode } from 'react';
-import { Table } from '~/feature/common/Table';
+import { Table } from '../common/Table';
 
 type Person = {
 	id: string;
@@ -159,8 +159,7 @@ const defaultData: Person[] = [
 		city: 'yangon',
 	},
 ];
-
-const CustomersPage = () => {
+export const CustomerTable = () => {
 	const defaultColumns: ColumnDef<Person>[] = useMemo(
 		() => [
 			{
@@ -250,17 +249,11 @@ const CustomersPage = () => {
 	);
 
 	return (
-		<Stack>
-			<Text>CustomersPage</Text>
-
-			<Table
-				data={defaultData}
-				columns={defaultColumns}
-				withBorder
-				disabledRowClickDetail
-			/>
-		</Stack>
+		<Table
+			data={defaultData}
+			columns={defaultColumns}
+			withBorder
+			disabledRowClickDetail
+		/>
 	);
 };
-
-export default CustomersPage;

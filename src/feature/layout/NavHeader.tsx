@@ -1,9 +1,5 @@
 import { ActionIcon, Box, Flex, Menu, Title } from '@mantine/core';
-import {
-	IconCirclePlus,
-	IconLogout,
-	IconUserCircle,
-} from '@tabler/icons-react';
+import { IconLogout, IconUserCircle } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 
 export const NavHeader = () => {
@@ -13,7 +9,7 @@ export const NavHeader = () => {
 		<Flex h='100%' align='center' justify={'space-between'}>
 			<Box>
 				<Title order={3} color='gray.8'>
-					Deli Tracking System
+					Delivery Tracking System
 				</Title>
 			</Box>
 
@@ -25,22 +21,13 @@ export const NavHeader = () => {
 				</Menu.Target>
 
 				<Menu.Dropdown>
-					<Menu.Label>Application</Menu.Label>
-					<Menu.Item
-						color='gray.9'
-						icon={<IconCirclePlus size={20} />}
-						onClick={() => void router.push('/admin/create-deli-employee')}
-					>
-						Create Delivery Employee
-					</Menu.Item>
-
 					<Menu.Divider />
 
 					<Menu.Label>Account Settings</Menu.Label>
 					<Menu.Item
 						color='gray.9'
 						icon={<IconUserCircle size={20} />}
-						onClick={() => void router.push('/admin/profile')}
+						onClick={() => void router.push('/profile')}
 					>
 						Profile
 					</Menu.Item>

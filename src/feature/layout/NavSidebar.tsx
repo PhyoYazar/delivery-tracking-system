@@ -1,26 +1,12 @@
 import { Box, NavLink, Stack, useMantineTheme } from '@mantine/core';
-import {
-	IconTruckDelivery,
-	IconTruckOff,
-	IconUserSearch,
-	IconUsers,
-} from '@tabler/icons-react';
+import { IconUserSearch, IconUsers } from '@tabler/icons-react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-const navigationItems = [
-	{
-		href: '/admin/active-trucks',
-		label: 'Active Delivery Trucks',
-		icon: IconTruckDelivery,
-	},
-	{
-		href: '/admin/finish-trucks',
-		label: 'Finish Delivery Trucks',
-		icon: IconTruckOff,
-	},
-	{ href: '/admin/deli-employee', label: 'Delivery Men', icon: IconUserSearch },
-	{ href: '/admin/customers', label: 'Customers', icon: IconUsers },
+const adminNavigationItems = [
+	{ href: '/', label: 'Parcels', icon: IconUserSearch },
+	{ href: '/customers', label: 'Customers', icon: IconUsers },
+	{ href: '/deliver-employee', label: 'Delivery Info', icon: IconUsers },
 ];
 
 export const NavSidebar = () => {
@@ -28,14 +14,14 @@ export const NavSidebar = () => {
 	const theme = useMantineTheme();
 
 	return (
-		<Stack spacing={4}>
-			{navigationItems.map(({ href, label, icon }) => (
+		<Stack spacing={6}>
+			{adminNavigationItems.map(({ href, label, icon }) => (
 				<NavLink
 					key={href}
 					component={Link}
 					href={href}
 					label={label}
-					active={pathname.startsWith(href)}
+					active={pathname === href}
 					icon={
 						<Box component={icon} size='1.5rem' color={theme.colors.gray[8]} />
 					}
