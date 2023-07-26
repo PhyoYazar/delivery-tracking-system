@@ -73,9 +73,6 @@ export function Table<D>({
 		onRowSelectionChange: setRowSelection,
 		columnResizeMode: 'onChange',
 		getCoreRowModel: getCoreRowModel(),
-		debugTable: true,
-		debugHeaders: true,
-		debugColumns: true,
 	});
 
 	useEffect(() => {

@@ -2,15 +2,36 @@ import {
 	Box,
 	Button,
 	Center,
+	PasswordInput,
 	Stack,
 	Text,
 	TextInput,
 	Title,
 } from '@mantine/core';
-import { useRouter } from 'next/router';
+import { useForm } from '@mantine/form';
+import { type GetServerSidePropsContext } from 'next';
+import { getSession, signIn } from 'next-auth/react';
+import type { Form } from '~/types/login';
 
 export const Login = () => {
-	const router = useRouter();
+	const form = useForm({
+		initialValues: {
+			email: '',
+			password: '',
+		},
+
+		// validate: {
+		// 	email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+		// },
+	});
+
+	const onSubmit = async (data: Form) => {
+		await signIn('credentials', {
+			...data,
+			redirect: true,
+			callbackUrl: '/',
+		});
+	};
 
 	return (
 		<Box
@@ -23,23 +44,40 @@ export const Login = () => {
 			})}
 		>
 			<Stack spacing={20}>
-				<Title order={3}>Search Your Products</Title>
+				<Title order={3}>Login</Title>
 
 				{/* <TextInput placeholder='Your email' label='Email' /> */}
 				{/* <PasswordInput placeholder='Password' label='Password' /> */}
 
-				<Stack>
-					<TextInput placeholder='username' label='Username' withAsterisk />
-					<TextInput
-						placeholder='09783432122'
-						label='Phone Number'
-						withAsterisk
-					/>
-				</Stack>
+				<Box
+					component='form'
+					w='100%'
+					onSubmit={form.onSubmit((values) => void onSubmit(values))}
+				>
+					<Stack>
+						<TextInput
+							placeholder='email'
+							label='Email'
+							withAsterisk
+							{...form.getInputProps('email')}
+						/>
+						<PasswordInput
+							placeholder='Password'
+							label='Password'
+							withAsterisk
+							{...form.getInputProps('password')}
+						/>
 
-				<Button color='orange' onClick={() => void router.push('/')}>
-					Search
-				</Button>
+						<Button
+							fullWidth
+							type='submit'
+							color='orange'
+							//  onClick={() => void router.push('/')}
+						>
+							Login
+						</Button>
+					</Stack>
+				</Box>
 
 				<Center>
 					<Text fz='xs' fw={700} color='gray.6'>
@@ -50,3 +88,19 @@ export const Login = () => {
 		</Box>
 	);
 };
+
+export async function getServerSideProps(_context: GetServerSidePropsContext) {
+	const session = await getSession({ req: _context.req });
+
+	if (session) {
+		return {
+			redirect: {
+				destination: '/',
+				permanent: false,
+			},
+		};
+	}
+	return {
+		props: {}, // will be passed to the page component as props
+	};
+}

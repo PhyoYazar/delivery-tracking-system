@@ -18,10 +18,12 @@ const ApiClient = (
 		},
 	});
 
+	console.log('api', session);
+
 	instance.interceptors.request.use((_request) => {
 		// only works on get server side props,
 		if (session) {
-			// _request.headers.Authorization = `Bearer ${session.user.accessToken}`;
+			_request.headers.Authorization = `Bearer ${session.user.accessToken}`;
 			// _request.headers['x-tenant-id'] = session.user.tenants[0]?.tenantId ?? '';
 		}
 		// if (option) {
@@ -37,7 +39,7 @@ const ApiClient = (
 		},
 		(error: AxiosError) => {
 			console.log(
-				'error',
+				'error => ',
 				// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
 				error.response?.request?.path || '',
 				JSON.stringify(error.response?.data, null, 2),

@@ -22,9 +22,8 @@ export const parcelRouter = createTRPCRouter({
 			.then((res) => [res, null] as const)
 			.catch((e: unknown) => [null, e] as const);
 
-		// console.log(response?.data, error);
 		if (error) {
-			console.log('trpc error => ', error);
+			// console.log('trpc error => ', error);
 		}
 
 		return response?.data;

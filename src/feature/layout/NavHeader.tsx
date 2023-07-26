@@ -1,5 +1,6 @@
 import { ActionIcon, Box, Flex, Menu, Title } from '@mantine/core';
 import { IconLogout, IconUserCircle } from '@tabler/icons-react';
+import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 export const NavHeader = () => {
@@ -34,11 +35,7 @@ export const NavHeader = () => {
 					<Menu.Item
 						color='red'
 						icon={<IconLogout size={20} />}
-						onClick={() =>
-							void router.replace('/login', undefined, {
-								shallow: true,
-							})
-						}
+						onClick={() => void signOut()}
 					>
 						Logout
 					</Menu.Item>

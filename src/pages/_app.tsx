@@ -1,4 +1,4 @@
-import { MantineProvider, createEmotionCache } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import { type Session } from 'next-auth';
@@ -8,7 +8,6 @@ import { Inter } from 'next/font/google';
 import { useRouter } from 'next/router';
 import { RouterTransition } from '~/feature/common/RouterTransition';
 import { Layout } from '~/feature/layout/Layout';
-import '~/styles/globals.css';
 import { api } from '~/utils/api';
 
 const inter = Inter({
@@ -16,16 +15,14 @@ const inter = Inter({
 	weight: ['100', '300', '400', '500', '600', '700', '900'],
 });
 
-const myCache = createEmotionCache({
-	key: 'mantine',
-	prepend: false,
-});
-
 const MyApp: AppType<{ session: Session | null }> = ({
 	Component,
 	pageProps: { session, ...pageProps },
 }) => {
 	const router = useRouter();
+
+	// console.log('session', session);
+
 	const layoutIgnoreRoutes = ['/profile', '/login', '/404', '/500'];
 	const shouldHideLayout = layoutIgnoreRoutes.includes(router.pathname);
 
@@ -38,7 +35,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
 			<MantineProvider
 				withNormalizeCSS
 				withCSSVariables
-				emotionCache={myCache}
 				theme={{
 					fontFamily: inter.style.fontFamily,
 
