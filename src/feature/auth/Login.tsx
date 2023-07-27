@@ -43,8 +43,10 @@ export const Login = () => {
 				border: `1px solid ${theme.colors.gray[3]}`,
 			})}
 		>
-			<Stack spacing={20}>
-				<Title order={3}>Login</Title>
+			<Stack spacing={30}>
+				<Center>
+					<Title order={2}>Login</Title>
+				</Center>
 
 				{/* <TextInput placeholder='Your email' label='Email' /> */}
 				{/* <PasswordInput placeholder='Password' label='Password' /> */}

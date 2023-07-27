@@ -1,4 +1,12 @@
-import { Center, Group, Loader, Stack, Tabs } from '@mantine/core';
+import {
+	Button,
+	Center,
+	Group,
+	Loader,
+	Select,
+	Stack,
+	Tabs,
+} from '@mantine/core';
 import Head from 'next/head';
 import { useState } from 'react';
 import { StyledTabs } from '~/feature/common/CustomTabs';
@@ -7,6 +15,10 @@ import { api } from '~/utils/api';
 
 export default function Home() {
 	const [activeTab, setActiveTab] = useState<string | null>('parcels');
+
+	const [townshipValue, setTownshipValue] = useState<string | null>(null);
+	const [assigneeValue, setAssigneeValue] = useState<string | null>(null);
+
 	const { data: parcels, isLoading } = api.parcel.getAllParcels.useQuery();
 
 	if (isLoading) {
@@ -48,7 +60,7 @@ export default function Home() {
 				{/* <LocationTracker /> */}
 
 				<StyledTabs value={activeTab} onTabChange={setActiveTab}>
-					<Group>
+					<Group position='apart'>
 						<Tabs.List>
 							<Tabs.Tab value='parcels'>Parcels Bookings</Tabs.Tab>
 							<Tabs.Tab value='pick up'>Pick up</Tabs.Tab>
@@ -56,6 +68,32 @@ export default function Home() {
 							<Tabs.Tab value='finish'>Finish</Tabs.Tab>
 							<Tabs.Tab value='warehouse'>Warehouse</Tabs.Tab>
 						</Tabs.List>
+
+						<Group spacing={10}>
+							<Select
+								w={150}
+								placeholder='Filter by township'
+								clearable
+								value={townshipValue}
+								onChange={setTownshipValue}
+								data={[
+									{ value: 'react', label: 'React' },
+									{ value: 'vue', label: 'Vue' },
+								]}
+							/>
+							<Select
+								w={150}
+								placeholder='Assign to'
+								clearable
+								value={assigneeValue}
+								onChange={setAssigneeValue}
+								data={[
+									{ value: 'john', label: 'John' },
+									{ value: 'berry', label: 'Berry' },
+								]}
+							/>
+							<Button disabled={assigneeValue === null}>Assign</Button>
+						</Group>
 					</Group>
 
 					<Tabs.Panel value='parcels' mt={10}>
@@ -78,16 +116,6 @@ export default function Home() {
 						)}
 					</Tabs.Panel>
 
-					<Tabs.Panel value='deliver' mt={10}>
-						{deliverParcels.length === 0 ? (
-							<Center w={'100%'} h={'70svh'}>
-								There is no delivering parcels.
-							</Center>
-						) : (
-							<ParcelTable data={deliverParcels} />
-						)}
-					</Tabs.Panel>
-
 					<Tabs.Panel value='warehouse' mt={10}>
 						{arrivedWarehouseParcels.length === 0 ? (
 							<Center w={'100%'} h={'70svh'}>
@@ -95,6 +123,16 @@ export default function Home() {
 							</Center>
 						) : (
 							<ParcelTable data={arrivedWarehouseParcels} />
+						)}
+					</Tabs.Panel>
+
+					<Tabs.Panel value='deliver' mt={10}>
+						{deliverParcels.length === 0 ? (
+							<Center w={'100%'} h={'70svh'}>
+								There is no delivering parcels.
+							</Center>
+						) : (
+							<ParcelTable data={deliverParcels} />
 						)}
 					</Tabs.Panel>
 
