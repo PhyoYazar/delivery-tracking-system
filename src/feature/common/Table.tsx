@@ -1,4 +1,9 @@
-import { Box, Table as MantineTable, ScrollArea } from '@mantine/core';
+import {
+	Box,
+	Table as MantineTable,
+	ScrollArea,
+	createStyles,
+} from '@mantine/core';
 import {
 	flexRender,
 	getCoreRowModel,
@@ -60,6 +65,7 @@ export function Table<D>({
 }: ITableProps<D>) {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 	const router = useRouter();
+	const { classes } = useStyles();
 
 	const [defaultData, setDefaultData] = useState(data);
 	const [defaultColumns] = useState<typeof columns>(() => [...columns]);
@@ -110,10 +116,13 @@ export function Table<D>({
 				border: withBorder ? `1px solid ${theme.colors.gray[3]}` : undefined,
 				backgroundColor: theme.white,
 				boxShadow: theme.shadows.md,
-				padding: theme.spacing.sm,
+				paddingLeft: theme.spacing.sm,
+				paddingRight: theme.spacing.sm,
 			})}
 		>
 			<MantineTable
+				className={classes.table}
+				verticalSpacing='md'
 				highlightOnHover
 				{...{
 					style: {
@@ -177,3 +186,32 @@ export function Table<D>({
 		</Box>
 	);
 }
+
+const useStyles = createStyles((theme) => ({
+	table: {
+		'& thead tr th:first-of-type, & tbody tr td:first-of-type, & tfoot tr th:first-of-type':
+			{
+				position: 'sticky',
+				left: 0,
+				zIndex: 4,
+				backgroundColor: theme.white,
+			},
+
+		'& thead tr th:last-of-type, & tbody tr td:last-of-type, & tfoot tr th:last-of-type ':
+			{
+				position: 'sticky',
+				right: 0,
+				zIndex: 4,
+				backgroundColor: theme.white,
+			},
+
+		// '& tbody tr td:first-of-type, & tr td:last-of-type': {
+		// 	backgroundColor: theme.white,
+		// },
+
+		'& tbody tr:hover, & tr:hover td:first-of-type, & tr:hover td:last-of-type':
+			{
+				backgroundColor: theme.colors.gray[1],
+			},
+	},
+}));

@@ -1,174 +1,28 @@
 import { Box, Button, Checkbox, Flex, Group, Text } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo, type ReactNode } from 'react';
+import type { ParcelResponse } from '~/types/parcel-api';
 import { Table } from '../common/Table';
+import { TableTextBox } from '../common/TableTextBox';
 
-type Person = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	age: number;
-	visits: number;
-	status: string;
-	progress: number;
-	isMarried: string;
-	bd: string;
-	town: string;
-	city: string;
-};
+interface ParcelProps {
+	data: ParcelResponse[];
+}
 
-const defaultData: Person[] = [
-	{
-		id: '1',
-		firstName: 'tanner',
-		lastName: 'linsley',
-		age: 24,
-		visits: 100,
-		status: 'In Relationship',
-		progress: 50,
+export const ParcelTable = (props: ParcelProps) => {
+	const { data } = props;
 
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '2',
-		firstName: 'joe',
-		lastName: 'dirte',
-		age: 45,
-		visits: 20,
-		status: 'Complicated',
-		progress: 10,
+	console.log(data);
 
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '3',
-		firstName: 'aoe',
-		lastName: 'hirte',
-		age: 45,
-		visits: 20,
-		status: 'Complicated',
-		progress: 10,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-];
-export const ParcelTable = () => {
-	const defaultColumns: ColumnDef<Person>[] = useMemo(
+	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(
 		() => [
 			{
 				// TODO: checkbox accessorKey should be "id"
-				accessorKey: 'firstName',
-				accessorFn: (row) => row.firstName,
+				accessorKey: 'Sender',
+				accessorFn: (row) => row.sender.name,
 				header: ({ table }) => {
 					return (
-						<Group spacing={12}>
+						<Group spacing={12} w={200}>
 							<Checkbox
 								size='xs'
 								checked={table.getIsAllRowsSelected()}
@@ -178,7 +32,7 @@ export const ParcelTable = () => {
 								}}
 							/>
 
-							<Text mt={4}>First Name</Text>
+							<Text>Sender</Text>
 						</Group>
 					);
 				},
@@ -197,63 +51,66 @@ export const ParcelTable = () => {
 							}}
 						/>
 
-						<span>{getValue() as ReactNode}</span>
+						<TableTextBox>{getValue() as ReactNode}</TableTextBox>
 					</Flex>
 				),
 			},
 			{
-				id: 'lastName',
-				accessorFn: (row) => row.lastName,
+				id: 'Receiver',
+				accessorFn: (row) => row.receiver.name,
 				cell: (info) => info.getValue(),
-				header: () => <Box w={200}>Last Name</Box>,
+				header: () => <TableTextBox>Receiver</TableTextBox>,
 			},
 			{
-				accessorKey: 'age',
-				header: () => 'Age',
+				accessorKey: 'sender_address',
+				accessorFn: (row) => row.sender.address,
+				header: () => <TableTextBox>Sender Address</TableTextBox>,
 			},
 			{
-				accessorKey: 'visits',
-				header: () => <span>Visits</span>,
+				accessorKey: 'receiver_address',
+				accessorFn: (row) => row.receiver.address,
+				header: () => <TableTextBox>Receiver Address</TableTextBox>,
 			},
 			{
-				accessorKey: 'status',
-				header: 'Status',
+				accessorKey: 'sender_region',
+				accessorFn: (row) =>
+					`${row.sender.township.name}, ${row.sender.city.name}`,
+				header: () => <TableTextBox>Sender Region</TableTextBox>,
 			},
 			{
-				accessorKey: 'progress',
-				header: () => <Box w={200}>Profile Progress</Box>,
+				accessorKey: 'receiver_region',
+				accessorFn: (row) =>
+					`${row.receiver.township.name}, ${row.receiver.city.name}`,
+				header: () => <TableTextBox>Receiver Region</TableTextBox>,
 			},
-			{
-				accessorKey: 'isMarried',
-				header: 'Married',
-			},
-			{
-				accessorKey: 'bd',
-				header: 'Birthday',
-			},
-			{
-				accessorKey: 'town',
-				header: 'Town',
-			},
-			{
-				accessorKey: 'city',
-				header: 'City',
-			},
+			// {
+			// 	accessorKey: 'deliver',
+			// 	accessorFn: (row) => row.user.,
+			// 	header: () => 'Deliver',
+			// },
+
 			{
 				accessorKey: 'id',
 				header: 'Edit',
-				cell: () => <Button onClick={(e) => e.stopPropagation()}>Edit</Button>,
+				cell: () => (
+					<Button size='sm' onClick={(e) => e.stopPropagation()}>
+						Edit
+					</Button>
+				),
 			},
 		],
 		[],
 	);
 
 	return (
-		<Table
-			data={defaultData}
-			columns={defaultColumns}
-			withBorder
-			disabledRowClickDetail
-		/>
+		<Box pr={20}>
+			<Table
+				data={data}
+				columns={defaultColumns}
+				autoColumnWidth
+				withBorder
+				disabledRowClickDetail
+			/>
+		</Box>
 	);
 };
