@@ -12,8 +12,6 @@ interface ParcelProps {
 export const ParcelTable = (props: ParcelProps) => {
 	const { data } = props;
 
-	console.log(data);
-
 	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(
 		() => [
 			{
@@ -62,26 +60,16 @@ export const ParcelTable = (props: ParcelProps) => {
 				header: () => <TableTextBox>Receiver</TableTextBox>,
 			},
 			{
-				accessorKey: 'sender_address',
-				accessorFn: (row) => row.sender.address,
-				header: () => <TableTextBox>Sender Address</TableTextBox>,
-			},
-			{
-				accessorKey: 'receiver_address',
-				accessorFn: (row) => row.receiver.address,
-				header: () => <TableTextBox>Receiver Address</TableTextBox>,
-			},
-			{
-				accessorKey: 'sender_region',
+				accessorKey: 'sender_location',
 				accessorFn: (row) =>
-					`${row.sender.township.name}, ${row.sender.city.name}`,
-				header: () => <TableTextBox>Sender Region</TableTextBox>,
+					`${row.sender.address}, ${row.sender.township.name}, ${row.sender.city.name}`,
+				header: () => <TableTextBox w={250}>Sender location</TableTextBox>,
 			},
 			{
-				accessorKey: 'receiver_region',
+				accessorKey: 'receiver_location',
 				accessorFn: (row) =>
-					`${row.receiver.township.name}, ${row.receiver.city.name}`,
-				header: () => <TableTextBox>Receiver Region</TableTextBox>,
+					`${row.receiver.address}, ${row.receiver.township.name}, ${row.receiver.city.name}`,
+				header: () => <TableTextBox w={250}>Receiver location</TableTextBox>,
 			},
 			// {
 			// 	accessorKey: 'deliver',

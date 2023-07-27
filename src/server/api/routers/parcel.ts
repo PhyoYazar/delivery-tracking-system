@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
-import ApiClient from '~/server/apiClient';
+import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import type { ParcelResponse } from '~/types/parcel-api';
 
 export const parcelRouter = createTRPCRouter({
-	createParcel: publicProcedure
+	createParcel: protectedProcedure
 		.input(
 			z.object({
 				price: z.number(),
@@ -13,19 +12,28 @@ export const parcelRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
-			await ApiClient(ctx.session).post<ParcelResponse>('/parcels', input);
+			await ctx.api.post<ParcelResponse>('/parcels', input);
 		}),
 
-	getAllParcels: publicProcedure.query(async ({ ctx }) => {
-		const [response, error] = await ApiClient(ctx.session)
-			.get<ParcelResponse[]>('/parcels')
-			.then((res) => [res, null] as const)
-			.catch((e: unknown) => [null, e] as const);
+	getAllParcels: protectedProcedure
+		.input(
+			z
+				.object({
+					sender_township: z.string().nullable(),
+					receiver_township: z.string().nullable(),
+				})
+				.optional(),
+		)
+		.query(async ({ input, ctx }) => {
+			const [response, error] = await ctx.api
+				.get<ParcelResponse[]>('/parcels', { params: input })
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
 
-		if (response === null || error) {
-			return 'Error';
-		}
+			if (response === null || error) {
+				return 'Error';
+			}
 
-		return response.data;
-	}),
+			return response.data;
+		}),
 });

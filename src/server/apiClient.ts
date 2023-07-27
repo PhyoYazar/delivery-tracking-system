@@ -18,8 +18,6 @@ const ApiClient = (
 		},
 	});
 
-	console.log('api', session);
-
 	instance.interceptors.request.use((_request) => {
 		// only works on get server side props,
 		if (session) {

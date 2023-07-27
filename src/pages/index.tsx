@@ -16,12 +16,35 @@ import { api } from '~/utils/api';
 export default function Home() {
 	const [activeTab, setActiveTab] = useState<string | null>('parcels');
 
-	const [townshipValue, setTownshipValue] = useState<string | null>(null);
+	const [senderTownshipValue, setSenderTownshipValue] = useState<string | null>(
+		null,
+	);
+	const [receiverTownshipValue, setReceiverTownshipValue] = useState<
+		string | null
+	>(null);
 	const [assigneeValue, setAssigneeValue] = useState<string | null>(null);
 
-	const { data: parcels, isLoading } = api.parcel.getAllParcels.useQuery();
+	const { data: parcels, isLoading: parcelsIsLoading } =
+		api.parcel.getAllParcels.useQuery({
+			sender_township: senderTownshipValue,
+			receiver_township: receiverTownshipValue,
+		});
 
-	if (isLoading) {
+	const { data: deliver } = api.deliver.getDelivers.useQuery();
+
+	// const { data: city } = api.location.getCity.useQuery();
+	const { data: township, isLoading: townshipIsLoading } =
+		api.location.getTownship.useQuery();
+
+	const townshipData =
+		!townshipIsLoading && township !== 'Error' && township !== undefined
+			? township.map((town) => ({
+					value: town.name,
+					label: town.name,
+			  }))
+			: [{ value: '', label: '' }];
+
+	if (parcelsIsLoading) {
 		return (
 			<Center w='100%' h='70svh'>
 				<Loader />
@@ -56,7 +79,7 @@ export default function Home() {
 				<link rel='icon' href='/favicon.ico' />
 			</Head>
 
-			<Stack h='100%'>
+			<Stack>
 				{/* <LocationTracker /> */}
 
 				<StyledTabs value={activeTab} onTabChange={setActiveTab}>
@@ -71,15 +94,20 @@ export default function Home() {
 
 						<Group spacing={10}>
 							<Select
-								w={150}
-								placeholder='Filter by township'
+								w={160}
+								placeholder='Filter by S township'
 								clearable
-								value={townshipValue}
-								onChange={setTownshipValue}
-								data={[
-									{ value: 'react', label: 'React' },
-									{ value: 'vue', label: 'Vue' },
-								]}
+								value={senderTownshipValue}
+								onChange={setSenderTownshipValue}
+								data={townshipData}
+							/>
+							<Select
+								w={160}
+								placeholder='Filter by R township'
+								clearable
+								value={receiverTownshipValue}
+								onChange={setReceiverTownshipValue}
+								data={townshipData}
 							/>
 							<Select
 								w={150}
@@ -146,9 +174,9 @@ export default function Home() {
 						)}
 					</Tabs.Panel>
 				</StyledTabs>
-
-				<pre>{JSON.stringify(parcels, null, 3)}</pre>
 			</Stack>
+
+			<pre>{JSON.stringify(deliver, null, 3)}</pre>
 		</>
 	);
 }

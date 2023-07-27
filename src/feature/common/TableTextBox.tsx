@@ -4,9 +4,9 @@ type Props = BoxProps & {
 	children: React.ReactNode;
 };
 
-export const TableTextBox = ({ children }: Props) => {
+export const TableTextBox = ({ children, ...other }: Props) => {
 	return (
-		<Box tt={'capitalize'} w={200}>
+		<Box tt={'capitalize'} w={200} {...other}>
 			{children}
 		</Box>
 	);
