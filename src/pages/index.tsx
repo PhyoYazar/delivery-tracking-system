@@ -64,11 +64,19 @@ export default function Home() {
 			!parcel.picked_up,
 	);
 
-	const pickUpParcels = parcels.filter((parcel) => parcel.picked_up);
-	const arrivedWarehouseParcels = parcels.filter(
-		(parcel) => parcel.arrived_warehouse,
+	const pickUpParcels = parcels.filter(
+		(parcel) =>
+			parcel.picked_up &&
+			!parcel.arrived_warehouse &&
+			!parcel.deliver &&
+			!parcel.finish,
 	);
-	const deliverParcels = parcels.filter((parcel) => parcel.deliver);
+	const arrivedWarehouseParcels = parcels.filter(
+		(parcel) => parcel.arrived_warehouse && !parcel.deliver && !parcel.finish,
+	);
+	const deliverParcels = parcels.filter(
+		(parcel) => parcel.deliver && !parcel.finish,
+	);
 	const finishParcels = parcels.filter((parcel) => parcel.finish);
 
 	return (
@@ -87,9 +95,9 @@ export default function Home() {
 						<Tabs.List>
 							<Tabs.Tab value='parcels'>Parcels Bookings</Tabs.Tab>
 							<Tabs.Tab value='pick up'>Pick up</Tabs.Tab>
+							<Tabs.Tab value='warehouse'>Warehouse</Tabs.Tab>
 							<Tabs.Tab value='deliver'>Deliver</Tabs.Tab>
 							<Tabs.Tab value='finish'>Finish</Tabs.Tab>
-							<Tabs.Tab value='warehouse'>Warehouse</Tabs.Tab>
 						</Tabs.List>
 
 						<Group spacing={10}>

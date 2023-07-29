@@ -1,10 +1,22 @@
 import { Button, Group, Modal, Stack, Text, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { CenterLoader } from '~/feature/common/CenterLoader';
 import { CreateDeliveryEmployee } from '~/feature/delivery/CreateDelivery';
 import { DeliverTable } from '~/feature/delivery/DeliverTable';
+import { api } from '~/utils/api';
 
 const DeliEmployeePage = () => {
 	const [opened, { open, close }] = useDisclosure(false);
+
+	const { data: delivers, isLoading } = api.deliver.getDelivers.useQuery();
+
+	if (isLoading) {
+		return <CenterLoader />;
+	}
+
+	if (delivers === 'Error' || delivers === undefined) {
+		return <div>Error</div>;
+	}
 
 	return (
 		<Stack>
@@ -14,7 +26,7 @@ const DeliEmployeePage = () => {
 				<Button onClick={open}>Create Deliver</Button>
 			</Group>
 
-			<DeliverTable />
+			<DeliverTable data={delivers} />
 
 			<Modal
 				opened={opened}

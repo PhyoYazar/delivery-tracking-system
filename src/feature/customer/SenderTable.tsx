@@ -1,23 +1,22 @@
 import { Box, Button, Checkbox, Flex, Group } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo, type ReactNode } from 'react';
-import type { ParcelResponse } from '~/types/parcel-api';
+import type { Sender } from '~/types';
 import { Table } from '../common/Table';
 import { TableTextBox } from '../common/TableTextBox';
 
-interface ParcelProps {
-	data: ParcelResponse[];
+interface Props {
+	data: Sender[];
 }
 
-export const ParcelTable = (props: ParcelProps) => {
+export const SenderTable = (props: Props) => {
 	const { data } = props;
 
-	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(
+	const defaultColumns: ColumnDef<Sender>[] = useMemo(
 		() => [
 			{
-				// TODO: checkbox accessorKey should be "id"
-				accessorKey: 'sender_name',
-				accessorFn: (row) => row.sender.name,
+				accessorKey: 'Name',
+				accessorFn: (row) => row.name,
 				header: ({ table }) => {
 					return (
 						<Group spacing={12} noWrap>
@@ -30,7 +29,7 @@ export const ParcelTable = (props: ParcelProps) => {
 								}}
 							/>
 
-							<TableTextBox>Sender Name</TableTextBox>
+							<TableTextBox>Name</TableTextBox>
 						</Group>
 					);
 				},
@@ -54,37 +53,34 @@ export const ParcelTable = (props: ParcelProps) => {
 				),
 			},
 			{
-				id: 'receiver_name',
-				accessorFn: (row) => row.receiver.name,
+				id: 'phone_number',
+				accessorFn: (row) => row.phone_number,
 				cell: (info) => info.getValue(),
-				header: () => <TableTextBox>Receiver Name</TableTextBox>,
+				header: () => <TableTextBox>Phone Number</TableTextBox>,
 			},
 			{
-				accessorKey: 'sender_location',
-				accessorFn: (row) =>
-					`${row.sender.address}, ${row.sender.township.name}, ${row.sender.city.name}`,
-				header: () => <TableTextBox w={250}>Sender location</TableTextBox>,
+				id: 'address',
+				accessorFn: (row) => row.address,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Address</TableTextBox>,
 			},
 			{
-				accessorKey: 'receiver_location',
-				accessorFn: (row) =>
-					`${row.receiver.address}, ${row.receiver.township.name}, ${row.receiver.city.name}`,
-				header: () => <TableTextBox w={250}>Receiver location</TableTextBox>,
+				id: 'city',
+				accessorFn: (row) => row.city.name,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>City</TableTextBox>,
 			},
-			// {
-			// 	accessorKey: 'deliver',
-			// 	accessorFn: (row) => row.user.,
-			// 	header: () => 'Deliver',
-			// },
+			{
+				id: 'township',
+				accessorFn: (row) => row.township.name,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Township</TableTextBox>,
+			},
 
 			{
 				accessorKey: 'id',
 				header: 'Edit',
-				cell: () => (
-					<Button size='sm' onClick={(e) => e.stopPropagation()}>
-						Edit
-					</Button>
-				),
+				cell: () => <Button onClick={(e) => e.stopPropagation()}>Edit</Button>,
 			},
 		],
 		[],
@@ -95,7 +91,6 @@ export const ParcelTable = (props: ParcelProps) => {
 			<Table
 				data={data}
 				columns={defaultColumns}
-				autoColumnWidth
 				withBorder
 				disabledRowClickDetail
 			/>

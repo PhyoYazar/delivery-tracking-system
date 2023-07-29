@@ -1,7 +1,7 @@
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
-import type { Deliver } from '~/types/user';
+import type { Receiver, Sender } from '~/types';
 
-export const deliverRouter = createTRPCRouter({
+export const customerRouter = createTRPCRouter({
 	// createDeliver: protectedProcedure
 	// 	.input(
 	// 		z.object({
@@ -14,9 +14,22 @@ export const deliverRouter = createTRPCRouter({
 	// 		await ctx.api.post<ParcelResponse>('/parcels', input);
 	// 	}),
 
-	getDelivers: protectedProcedure.query(async ({ ctx }) => {
+	getSenders: protectedProcedure.query(async ({ ctx }) => {
 		const [response, error] = await ctx.api
-			.get<Deliver[]>('/user?role=deliver')
+			.get<Sender[]>('/sender')
+			.then((res) => [res, null] as const)
+			.catch((e: unknown) => [null, e] as const);
+
+		if (response === null || error) {
+			return 'Error';
+		}
+
+		return response.data;
+	}),
+
+	getReceivers: protectedProcedure.query(async ({ ctx }) => {
+		const [response, error] = await ctx.api
+			.get<Receiver[]>('/receiver')
 			.then((res) => [res, null] as const)
 			.catch((e: unknown) => [null, e] as const);
 

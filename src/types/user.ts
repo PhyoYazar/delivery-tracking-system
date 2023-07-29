@@ -1,3 +1,5 @@
+import type { City, Township } from './address';
+
 export interface Deliver {
 	id: string;
 	created_at: string;
@@ -8,6 +10,8 @@ export interface Deliver {
 	phone_number: string;
 	address: string;
 	city_id: string;
+	city: City;
 	township_id: string;
+	township: Township;
 	role: string;
 }

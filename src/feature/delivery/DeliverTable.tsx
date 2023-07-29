@@ -1,175 +1,26 @@
-import { Box, Button, Checkbox, Flex, Group, Text } from '@mantine/core';
+import { Button, Checkbox, Flex, Group } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/react-table';
 import { useMemo, type ReactNode } from 'react';
+import type { Deliver } from '~/types';
 import { Table } from '../common/Table';
+import { TableTextBox } from '../common/TableTextBox';
 
-type Person = {
-	id: string;
-	firstName: string;
-	lastName: string;
-	age: number;
-	visits: number;
-	status: string;
-	progress: number;
-	isMarried: string;
-	bd: string;
-	town: string;
-	city: string;
-};
+interface Props {
+	data: Deliver[];
+}
 
-const defaultData: Person[] = [
-	{
-		id: '1',
-		firstName: 'tanner',
-		lastName: 'linsley',
-		age: 24,
-		visits: 100,
-		status: 'In Relationship',
-		progress: 50,
+export const DeliverTable = (props: Props) => {
+	const { data } = props;
 
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '2',
-		firstName: 'joe',
-		lastName: 'dirte',
-		age: 45,
-		visits: 20,
-		status: 'Complicated',
-		progress: 10,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '3',
-		firstName: 'aoe',
-		lastName: 'hirte',
-		age: 45,
-		visits: 20,
-		status: 'Complicated',
-		progress: 10,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-	{
-		id: '4',
-		firstName: 'tandy',
-		lastName: 'miller',
-		age: 40,
-		visits: 40,
-		status: 'Single',
-		progress: 80,
-
-		isMarried: 'No',
-		bd: '20.3.1998',
-		town: 'hledan',
-		city: 'yangon',
-	},
-];
-
-export const DeliverTable = () => {
-	const defaultColumns: ColumnDef<Person>[] = useMemo(
+	const defaultColumns: ColumnDef<Deliver>[] = useMemo(
 		() => [
 			{
 				// TODO: checkbox accessorKey should be "id"
-				accessorKey: 'firstName',
-				accessorFn: (row) => row.firstName,
+				accessorKey: 'name',
+				accessorFn: (row) => row.name,
 				header: ({ table }) => {
 					return (
-						<Group spacing={12}>
+						<Group spacing={12} noWrap>
 							<Checkbox
 								size='xs'
 								checked={table.getIsAllRowsSelected()}
@@ -179,7 +30,7 @@ export const DeliverTable = () => {
 								}}
 							/>
 
-							<Text>First Name</Text>
+							<TableTextBox>Name</TableTextBox>
 						</Group>
 					);
 				},
@@ -203,43 +54,36 @@ export const DeliverTable = () => {
 				),
 			},
 			{
-				id: 'lastName',
-				accessorFn: (row) => row.lastName,
+				id: 'email',
+				accessorFn: (row) => row.email,
 				cell: (info) => info.getValue(),
-				header: () => <Box w={200}>Last Name</Box>,
+				header: () => <TableTextBox>Email</TableTextBox>,
 			},
 			{
-				accessorKey: 'age',
-				header: () => 'Age',
+				id: 'phone_number',
+				accessorFn: (row) => row.phone_number,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Phone Number</TableTextBox>,
 			},
 			{
-				accessorKey: 'visits',
-				header: () => <span>Visits</span>,
+				id: 'address',
+				accessorFn: (row) => row.address,
+				cell: (info) => info.getValue() || '-',
+				header: () => <TableTextBox>Address</TableTextBox>,
 			},
 			{
-				accessorKey: 'status',
-				header: 'Status',
+				id: 'city',
+				accessorFn: (row) => row?.city?.name || '-',
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>City</TableTextBox>,
 			},
 			{
-				accessorKey: 'progress',
-				header: () => <Box w={200}>Profile Progress</Box>,
+				id: 'township',
+				accessorFn: (row) => row?.township?.name || '-',
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Township</TableTextBox>,
 			},
-			{
-				accessorKey: 'isMarried',
-				header: 'Married',
-			},
-			{
-				accessorKey: 'bd',
-				header: 'Birthday',
-			},
-			{
-				accessorKey: 'town',
-				header: 'Town',
-			},
-			{
-				accessorKey: 'city',
-				header: 'City',
-			},
+
 			{
 				accessorKey: 'id',
 				header: 'Edit',
@@ -251,7 +95,7 @@ export const DeliverTable = () => {
 
 	return (
 		<Table
-			data={defaultData}
+			data={data}
 			columns={defaultColumns}
 			withBorder
 			disabledRowClickDetail
