@@ -1,28 +1,42 @@
+import { TRPCError } from '@trpc/server';
+import { AxiosError } from 'axios';
 import { z } from 'zod';
 import { createTRPCRouter, publicProcedure } from '~/server/api/trpc';
 import ApiClient from '~/server/apiClient';
+import type { Deliver, ErrorResponse } from '~/types';
 import type { ParcelResponse } from '~/types/parcel-api';
 
 export const authRouter = createTRPCRouter({
 	signUp: publicProcedure
 		.input(
 			z.object({
-				price: z.number(),
-				sender_id: z.string(),
-				receiver_id: z.string(),
+				name: z.string(),
+				email: z.string().email(),
+				phone_number: z.string(),
+				password: z.string().min(6),
+				address: z.string(),
+				township_id: z.string().nullable(),
+				city_id: z.string().nullable(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
 			const [response, error] = await ApiClient(ctx.session)
-				.post<ParcelResponse>('/auth/sign-up', input)
+				.post<Deliver>('/auth/sign-up', input)
 				.then((res) => [res, null] as const)
 				.catch((e: unknown) => [null, e] as const);
 
-			if (error) {
-				// console.log('sign up trpc error => ', error);
+			// if (error) {
+			// 	console.log('sign up trpc error => ', error);
+			// }
+			if (error instanceof AxiosError) {
+				const errorResponse = error.response as ErrorResponse;
+				throw new TRPCError({
+					code: 'CONFLICT',
+					message: JSON.stringify(errorResponse.data.message),
+				});
 			}
 
-			return response;
+			return response?.data;
 		}),
 
 	login: publicProcedure.mutation(async ({ input, ctx }) => {

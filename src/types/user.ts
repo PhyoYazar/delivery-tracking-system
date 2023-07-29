@@ -20,10 +20,11 @@ export interface CreateDeliverForm {
 	name: string;
 	email: string;
 	password: string;
+	passwordConfirm: string;
 	phone_number: string;
 	address: string;
-	city_id: string;
-	township_id: string;
+	city_id: string | null;
+	township_id: string | null;
 }
 
 export interface UserProfileForm {

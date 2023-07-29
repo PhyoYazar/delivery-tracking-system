@@ -2,13 +2,8 @@ import { TRPCError } from '@trpc/server';
 import { AxiosError } from 'axios';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import type { ErrorResponse } from '~/types';
 import type { Deliver } from '~/types/user';
-
-interface ErrorResponse {
-	data: {
-		message: string;
-	};
-}
 
 export const userRouter = createTRPCRouter({
 	getUserById: protectedProcedure

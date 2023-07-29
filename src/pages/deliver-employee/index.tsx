@@ -42,7 +42,7 @@ const DeliEmployeePage = () => {
 				}
 			>
 				{/* Modal content */}
-				<CreateDeliveryEmployee />
+				<CreateDeliveryEmployee close={close} />
 			</Modal>
 		</Stack>
 	);

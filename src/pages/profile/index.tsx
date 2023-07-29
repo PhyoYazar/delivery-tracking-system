@@ -8,7 +8,7 @@ import {
 	TextInput,
 	Title,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { isNotEmpty, useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { IconAlarm, IconCheck } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
@@ -43,6 +43,13 @@ const ProfilePage = () => {
 			address: userData?.address || '',
 			township: userData?.township?.name || '',
 			city: userData?.city?.name || '',
+		},
+
+		validate: {
+			name: isNotEmpty('Name cannot be empty'),
+			email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+			phone_number: isNotEmpty('Phone Number cannot be empty'),
+			address: isNotEmpty('Address cannot be empty'),
 		},
 	});
 
