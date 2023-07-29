@@ -81,7 +81,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
 					},
 				}}
 			>
-				<Notifications position='bottom-left' zIndex={100} />
+				<Notifications position='bottom-right' zIndex={100} />
 				<RouterTransition />
 				<ModalsProvider>
 					<SessionProvider session={session}>

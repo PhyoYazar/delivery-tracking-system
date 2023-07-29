@@ -103,7 +103,7 @@ export default function Home() {
 						<Group spacing={10}>
 							<Select
 								w={160}
-								placeholder='Filter by S township'
+								placeholder='Filter by S town'
 								clearable
 								value={senderTownshipValue}
 								onChange={setSenderTownshipValue}
@@ -111,7 +111,7 @@ export default function Home() {
 							/>
 							<Select
 								w={160}
-								placeholder='Filter by R township'
+								placeholder='Filter by R town'
 								clearable
 								value={receiverTownshipValue}
 								onChange={setReceiverTownshipValue}

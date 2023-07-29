@@ -9,6 +9,17 @@ import {
 } from '@mantine/core';
 
 export const CreateDeliveryEmployee = () => {
+	// const form = useForm({
+	// 	initialValues: {
+	// 		email: '',
+	// 		termsOfService: false,
+	// 	},
+
+	// 	validate: {
+	// 		email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+	// 	},
+	// });
+
 	return (
 		<Stack>
 			<ScrollArea h='65vh' offsetScrollbars>

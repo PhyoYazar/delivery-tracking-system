@@ -1,18 +1,17 @@
-import { Box, Button } from '@mantine/core';
+import { Button, type ButtonProps } from '@mantine/core';
 import { IconArrowLeft } from '@tabler/icons-react';
 import { useRouter } from 'next/router';
 
-export const GoBackButton = () => {
+export const GoBackButton = (props: ButtonProps) => {
 	const router = useRouter();
 
 	return (
-		<Box>
-			<Button
-				leftIcon={<IconArrowLeft size={20} />}
-				onClick={() => void router.back()}
-			>
-				Back
-			</Button>
-		</Box>
+		<Button
+			{...props}
+			leftIcon={<IconArrowLeft size={20} />}
+			onClick={() => void router.back()}
+		>
+			Back
+		</Button>
 	);
 };

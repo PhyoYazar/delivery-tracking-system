@@ -16,8 +16,8 @@ export const ParcelTable = (props: ParcelProps) => {
 		() => [
 			{
 				// TODO: checkbox accessorKey should be "id"
-				accessorKey: 'sender_name',
-				accessorFn: (row) => row.sender.name,
+				accessorKey: 'product_id',
+				accessorFn: (row) => row.id.slice(0, 5),
 				header: ({ table }) => {
 					return (
 						<Group spacing={12} noWrap>
@@ -30,7 +30,7 @@ export const ParcelTable = (props: ParcelProps) => {
 								}}
 							/>
 
-							<TableTextBox>Sender Name</TableTextBox>
+							<TableTextBox>Product ID</TableTextBox>
 						</Group>
 					);
 				},
@@ -54,10 +54,22 @@ export const ParcelTable = (props: ParcelProps) => {
 				),
 			},
 			{
+				id: 'sender_name',
+				accessorFn: (row) => row.sender.name,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Sender Name</TableTextBox>,
+			},
+			{
 				id: 'receiver_name',
 				accessorFn: (row) => row.receiver.name,
 				cell: (info) => info.getValue(),
 				header: () => <TableTextBox>Receiver Name</TableTextBox>,
+			},
+			{
+				id: 'price',
+				accessorFn: (row) => row.price,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Price</TableTextBox>,
 			},
 			{
 				accessorKey: 'sender_location',

@@ -15,3 +15,22 @@ export interface Deliver {
 	township: Township;
 	role: string;
 }
+
+export interface CreateDeliverForm {
+	name: string;
+	email: string;
+	password: string;
+	phone_number: string;
+	address: string;
+	city_id: string;
+	township_id: string;
+}
+
+export interface UserProfileForm {
+	name: string;
+	email: string;
+	phone_number: string;
+	address: string;
+	township: string;
+	city: string;
+}

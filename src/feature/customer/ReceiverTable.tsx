@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Flex, Group } from '@mantine/core';
+import { Box, Flex, Group } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo, type ReactNode } from 'react';
 import type { Receiver } from '~/types';
@@ -20,14 +20,14 @@ export const ReceiverTable = (props: Props) => {
 				header: ({ table }) => {
 					return (
 						<Group spacing={12} noWrap>
-							<Checkbox
+							{/* <Checkbox
 								size='xs'
 								checked={table.getIsAllRowsSelected()}
 								indeterminate={table.getIsSomeRowsSelected()}
 								onChange={(e) => {
 									table.getToggleAllRowsSelectedHandler()(e);
 								}}
-							/>
+							/> */}
 
 							<TableTextBox>Name</TableTextBox>
 						</Group>
@@ -35,7 +35,7 @@ export const ReceiverTable = (props: Props) => {
 				},
 				cell: ({ getValue, row }) => (
 					<Flex align='center' gap={12}>
-						<Checkbox
+						{/* <Checkbox
 							size='xs'
 							{...{
 								checked: row.getIsSelected(),
@@ -46,7 +46,7 @@ export const ReceiverTable = (props: Props) => {
 							onChange={(e) => {
 								row.getToggleSelectedHandler()(e);
 							}}
-						/>
+						/> */}
 
 						<TableTextBox>{getValue() as ReactNode}</TableTextBox>
 					</Flex>
@@ -77,11 +77,11 @@ export const ReceiverTable = (props: Props) => {
 				header: () => <TableTextBox>Township</TableTextBox>,
 			},
 
-			{
-				accessorKey: 'id',
-				header: 'Edit',
-				cell: () => <Button onClick={(e) => e.stopPropagation()}>Edit</Button>,
-			},
+			// {
+			// 	accessorKey: 'id',
+			// 	header: 'Edit',
+			// 	cell: () => <Button onClick={(e) => e.stopPropagation()}>Edit</Button>,
+			// },
 		],
 		[],
 	);
