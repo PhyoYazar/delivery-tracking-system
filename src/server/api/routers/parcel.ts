@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { AxiosError } from 'axios';
+import queryString from 'query-string';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import type { ErrorResponse } from '~/types';
@@ -53,10 +54,10 @@ export const parcelRouter = createTRPCRouter({
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
+			const query = queryString.stringify(input, { arrayFormat: 'index' });
+
 			const [response, error] = await ctx.api
-				.patch<ApiResponse<ParcelResponse>>('/parcels/updates', {
-					params: input,
-				})
+				.patch<ApiResponse<ParcelResponse>>(`/parcels/updates?${query}`)
 				.then((res) => [res, null] as const)
 				.catch((e: unknown) => [null, e] as const);
 

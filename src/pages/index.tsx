@@ -67,12 +67,24 @@ export default function Home() {
 	const { data: deliver, isLoading: deliverIsLoading } =
 		api.deliver.getDelivers.useQuery();
 
+	const pickers =
+		!deliverIsLoading && deliver !== 'Error' && deliver !== undefined
+			? deliver
+					.filter((pick) => pick.role === 'picker')
+					.map((picker) => ({
+						value: picker.id,
+						label: picker.name,
+					}))
+			: [{ value: '', label: '' }];
+
 	const delivers =
 		!deliverIsLoading && deliver !== 'Error' && deliver !== undefined
-			? deliver.map((deli) => ({
-					value: deli.id,
-					label: deli.name,
-			  }))
+			? deliver
+					.filter((de) => de.role === 'deliver')
+					.map((deli) => ({
+						value: deli.id,
+						label: deli.name,
+					}))
 			: [{ value: '', label: '' }];
 
 	//*================================================================================================
@@ -119,18 +131,11 @@ export default function Home() {
 				break;
 		}
 
-		console.log({
-			parcels: selectedRowsIds,
-			user_id: assigneeValue,
-			[stage]: true,
-		});
-
 		updateParcels.mutate({
 			parcels: selectedRowsIds,
 			user_id: assigneeValue,
 			[stage]: true,
 		});
-		//
 	};
 
 	//*================================================================================================
@@ -226,15 +231,22 @@ export default function Home() {
 										clearable
 										value={assigneeValue}
 										onChange={setAssigneeValue}
-										data={delivers}
+										data={activeTab === 'parcels' ? pickers : delivers}
 									/>
 									<Button
+										w={90}
 										disabled={
-											assigneeValue === null || selectedRowsIds.length === 0
+											assigneeValue === null ||
+											selectedRowsIds.length === 0 ||
+											updateParcels.isLoading
 										}
 										onClick={assignHandler}
 									>
-										Assign
+										{updateParcels.isLoading ? (
+											<Loader size='sm' color='gray' />
+										) : (
+											'Assign'
+										)}
 									</Button>
 								</>
 							)}
