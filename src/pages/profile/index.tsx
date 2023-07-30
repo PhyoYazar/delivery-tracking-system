@@ -4,11 +4,14 @@ import {
 	Center,
 	Flex,
 	Group,
+	Loader,
+	Space,
 	Stack,
 	TextInput,
 	Title,
 } from '@mantine/core';
 import { isNotEmpty, useForm } from '@mantine/form';
+import { useDidUpdate } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconAlarm, IconCheck } from '@tabler/icons-react';
 import { useSession } from 'next-auth/react';
@@ -21,12 +24,11 @@ import { filterTruthyProperties } from '~/utils/helpers';
 const ProfilePage = () => {
 	const [isEditable, setIsEditable] = useState<boolean>(false);
 
+	const utils = api.useContext();
 	const { data } = useSession();
 	const isDeliver = data?.user.role === 'deliver';
 
-	const utils = api.useContext();
-
-	const { data: userData } = api.user.getUserById.useQuery(
+	const { data: userData, isSuccess } = api.user.getUserById.useQuery(
 		{
 			id: data?.user.id ?? '',
 		},
@@ -37,12 +39,12 @@ const ProfilePage = () => {
 
 	const form = useForm({
 		initialValues: {
-			name: userData?.name || '',
-			email: userData?.email || '',
-			phone_number: userData?.phone_number || '',
-			address: userData?.address || '',
-			township: userData?.township?.name || '',
-			city: userData?.city?.name || '',
+			name: '',
+			email: '',
+			phone_number: '',
+			address: '',
+			township: '',
+			city: '',
 		},
 
 		validate: {
@@ -53,9 +55,23 @@ const ProfilePage = () => {
 		},
 	});
 
+	useDidUpdate(() => {
+		if (isSuccess && !!userData) {
+			form.setValues({
+				name: userData.name,
+				email: userData.email,
+				phone_number: userData.phone_number,
+				address: userData.address,
+				township: userData.township.name,
+				city: userData.city.name,
+			});
+		}
+	}, [isSuccess, userData]);
+
 	const userUpdate = api.user.updateUserById.useMutation({
 		onSuccess: () => {
 			void utils.user.getUserById.invalidate({ id: data?.user.id });
+
 			notifications.show({
 				message: 'Successfully updated.',
 				icon: <IconCheck size='1rem' />,
@@ -63,7 +79,10 @@ const ProfilePage = () => {
 				withCloseButton: true,
 				color: 'green',
 			});
+
+			setIsEditable(false);
 		},
+
 		onError: () => {
 			form.reset();
 
@@ -90,7 +109,6 @@ const ProfilePage = () => {
 		if (Object.keys(obj).length > 0) {
 			userUpdate.mutate({ id: data?.user.id, ...obj });
 		}
-		setIsEditable(false);
 	};
 
 	return (
@@ -111,41 +129,7 @@ const ProfilePage = () => {
 						onSubmit={form.onSubmit((values) => void onSubmit(values))}
 					>
 						<Stack spacing={30}>
-							<Flex align={'center'} justify={'space-between'}>
-								{/* {!isDeliver && (
-									<>
-										{!isEditable ? (
-											<Box onClick={() => setIsEditable(true)}>
-												<Button
-													component={Box}
-													color='gray.6'
-													w={120}
-													size='md'
-												>
-													Edit
-												</Button>
-											</Box>
-										) : (
-											<Group>
-												<Box onClick={() => setIsEditable(false)}>
-													<Button
-														component={Box}
-														variant='outline'
-														w={120}
-														color='gray.6'
-														size='md'
-													>
-														Cancel
-													</Button>
-												</Box>
-												<Button w={120} color='gray.6' size='md' type='submit'>
-													Save
-												</Button>
-											</Group>
-										)}
-									</>
-								)} */}
-							</Flex>
+							<Space />
 
 							<TextInput
 								size='md'
@@ -223,7 +207,11 @@ const ProfilePage = () => {
 											</Box>
 										) : (
 											<Group>
-												<Box onClick={() => setIsEditable(false)}>
+												<Box
+													onClick={() =>
+														!userUpdate.isLoading && setIsEditable(false)
+													}
+												>
 													<Button
 														component={Box}
 														variant='outline'
@@ -234,8 +222,18 @@ const ProfilePage = () => {
 														Cancel
 													</Button>
 												</Box>
-												<Button w={120} color='gray.6' size='md' type='submit'>
-													Save
+												<Button
+													disabled={userUpdate.isLoading}
+													w={120}
+													color='gray.6'
+													size='md'
+													type='submit'
+												>
+													{userUpdate.isLoading ? (
+														<Loader size='sm' color='gray' />
+													) : (
+														'Save'
+													)}
 												</Button>
 											</Group>
 										)}
