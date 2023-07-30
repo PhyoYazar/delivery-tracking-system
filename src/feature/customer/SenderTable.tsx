@@ -91,6 +91,7 @@ export const SenderTable = (props: Props) => {
 			<Table
 				data={data}
 				columns={defaultColumns}
+				autoColumnWidth
 				withBorder
 				disabledRowClickDetail
 			/>

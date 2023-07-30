@@ -1,4 +1,4 @@
-import { Box, Button, Checkbox, Flex, Group } from '@mantine/core';
+import { Box, Checkbox, Flex, Group } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo, type ReactNode } from 'react';
 import type { ParcelResponse } from '~/types/parcel-api';
@@ -7,10 +7,11 @@ import { TableTextBox } from '../common/TableTextBox';
 
 interface ParcelProps {
 	data: ParcelResponse[];
+	getSelectedRows: (val: ParcelResponse[]) => void;
 }
 
 export const ParcelTable = (props: ParcelProps) => {
-	const { data } = props;
+	const { data, getSelectedRows } = props;
 
 	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(
 		() => [
@@ -89,15 +90,15 @@ export const ParcelTable = (props: ParcelProps) => {
 			// 	header: () => 'Deliver',
 			// },
 
-			{
-				accessorKey: 'id',
-				header: 'Edit',
-				cell: () => (
-					<Button size='sm' onClick={(e) => e.stopPropagation()}>
-						Edit
-					</Button>
-				),
-			},
+			// {
+			// 	accessorKey: 'id',
+			// 	header: 'Edit',
+			// 	cell: () => (
+			// 		<Button size='sm' onClick={(e) => e.stopPropagation()}>
+			// 			Edit
+			// 		</Button>
+			// 	),
+			// },
 		],
 		[],
 	);
@@ -110,6 +111,7 @@ export const ParcelTable = (props: ParcelProps) => {
 				autoColumnWidth
 				withBorder
 				disabledRowClickDetail
+				onSelectedRowsChange={getSelectedRows}
 			/>
 		</Box>
 	);

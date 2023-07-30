@@ -1,5 +1,9 @@
+import { TRPCError } from '@trpc/server';
+import { AxiosError } from 'axios';
 import { z } from 'zod';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import type { ErrorResponse } from '~/types';
+import type { ApiResponse } from '~/types/api';
 import type { ParcelResponse } from '~/types/parcel-api';
 
 export const parcelRouter = createTRPCRouter({
@@ -35,5 +39,35 @@ export const parcelRouter = createTRPCRouter({
 			}
 
 			return response.data;
+		}),
+
+	updateParcels: protectedProcedure
+		.input(
+			z.object({
+				parcels: z.string().array(),
+				user_id: z.string().nullable().optional(),
+				picked_up: z.boolean().optional(),
+				finish: z.boolean().optional(),
+				arrived_warehouse: z.boolean().optional(),
+				deliver: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const [response, error] = await ctx.api
+				.patch<ApiResponse<ParcelResponse>>('/parcels/updates', {
+					params: input,
+				})
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
+
+			if (error instanceof AxiosError) {
+				const errorResponse = error.response as ErrorResponse;
+				throw new TRPCError({
+					code: 'BAD_REQUEST',
+					message: JSON.stringify(errorResponse.data.message),
+				});
+			}
+
+			return response?.data;
 		}),
 });

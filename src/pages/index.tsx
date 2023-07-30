@@ -7,14 +7,17 @@ import {
 	Stack,
 	Tabs,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
+import { IconAlarm, IconCheck } from '@tabler/icons-react';
 import Head from 'next/head';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { StyledTabs } from '~/feature/common/CustomTabs';
 import { ParcelTable } from '~/feature/parcel/ParcelTable';
+import type { ParcelResponse } from '~/types';
 import { api } from '~/utils/api';
 
 export default function Home() {
-	const [activeTab, setActiveTab] = useState<string | null>('parcels');
+	const [activeTab, setActiveTab] = useState<string>('parcels');
 
 	const [senderTownshipValue, setSenderTownshipValue] = useState<string | null>(
 		null,
@@ -24,13 +27,55 @@ export default function Home() {
 	>(null);
 	const [assigneeValue, setAssigneeValue] = useState<string | null>(null);
 
+	const [selectedRowsIds, setSelectedRowsIds] = useState<string[]>([]);
+
+	const utils = api.useContext();
+
+	//*================================================================================================
+
 	const { data: parcels, isLoading: parcelsIsLoading } =
 		api.parcel.getAllParcels.useQuery({
 			sender_township: senderTownshipValue,
 			receiver_township: receiverTownshipValue,
 		});
 
-	const { data: deliver } = api.deliver.getDelivers.useQuery();
+	const updateParcels = api.parcel.updateParcels.useMutation({
+		onSuccess: () => {
+			void utils.parcel.getAllParcels.invalidate();
+
+			notifications.show({
+				message: 'Successfully updated.',
+				icon: <IconCheck size='1rem' />,
+				autoClose: true,
+				withCloseButton: true,
+				color: 'green',
+			});
+		},
+		onError: () => {
+			notifications.show({
+				message: 'Failed to update. Please try again',
+				icon: <IconAlarm size='1rem' />,
+				autoClose: true,
+				withCloseButton: true,
+				color: 'red',
+			});
+		},
+	});
+
+	//*================================================================================================
+
+	const { data: deliver, isLoading: deliverIsLoading } =
+		api.deliver.getDelivers.useQuery();
+
+	const delivers =
+		!deliverIsLoading && deliver !== 'Error' && deliver !== undefined
+			? deliver.map((deli) => ({
+					value: deli.id,
+					label: deli.name,
+			  }))
+			: [{ value: '', label: '' }];
+
+	//*================================================================================================
 
 	// const { data: city } = api.location.getCity.useQuery();
 	const { data: township, isLoading: townshipIsLoading } =
@@ -43,6 +88,52 @@ export default function Home() {
 					label: town.name,
 			  }))
 			: [{ value: '', label: '' }];
+
+	//*================================================================================================
+
+	const getSelectedRowsHandler = useCallback((value: ParcelResponse[]) => {
+		setSelectedRowsIds(value.map((val) => val.id));
+	}, []);
+
+	const assignHandler = () => {
+		if (selectedRowsIds.length === 0) {
+			return;
+		}
+
+		let stage: string;
+		switch (activeTab) {
+			case 'parcels':
+				stage = 'picked_up';
+				break;
+			case 'picked_up':
+				stage = 'arrived_warehouse';
+				break;
+			case 'arrived_warehouse':
+				stage = 'deliver';
+				break;
+			case 'deliver':
+				stage = 'finish';
+				break;
+			default:
+				stage = 'picked_up';
+				break;
+		}
+
+		console.log({
+			parcels: selectedRowsIds,
+			user_id: assigneeValue,
+			[stage]: true,
+		});
+
+		updateParcels.mutate({
+			parcels: selectedRowsIds,
+			user_id: assigneeValue,
+			[stage]: true,
+		});
+		//
+	};
+
+	//*================================================================================================
 
 	if (parcelsIsLoading) {
 		return (
@@ -90,45 +181,63 @@ export default function Home() {
 			<Stack>
 				{/* <LocationTracker /> */}
 
-				<StyledTabs value={activeTab} onTabChange={setActiveTab}>
+				<StyledTabs
+					value={activeTab}
+					onTabChange={(val: string) => {
+						setActiveTab(val);
+						setSelectedRowsIds([]);
+					}}
+				>
 					<Group position='apart'>
 						<Tabs.List>
 							<Tabs.Tab value='parcels'>Parcels Bookings</Tabs.Tab>
-							<Tabs.Tab value='pick up'>Pick up</Tabs.Tab>
-							<Tabs.Tab value='warehouse'>Warehouse</Tabs.Tab>
+							<Tabs.Tab value='picked_up'>Pick up</Tabs.Tab>
+							<Tabs.Tab value='arrived_warehouse'>Warehouse</Tabs.Tab>
 							<Tabs.Tab value='deliver'>Deliver</Tabs.Tab>
 							<Tabs.Tab value='finish'>Finish</Tabs.Tab>
 						</Tabs.List>
 
 						<Group spacing={10}>
-							<Select
-								w={160}
-								placeholder='Filter by S town'
-								clearable
-								value={senderTownshipValue}
-								onChange={setSenderTownshipValue}
-								data={townshipData}
-							/>
-							<Select
-								w={160}
-								placeholder='Filter by R town'
-								clearable
-								value={receiverTownshipValue}
-								onChange={setReceiverTownshipValue}
-								data={townshipData}
-							/>
-							<Select
-								w={150}
-								placeholder='Assign to'
-								clearable
-								value={assigneeValue}
-								onChange={setAssigneeValue}
-								data={[
-									{ value: 'john', label: 'John' },
-									{ value: 'berry', label: 'Berry' },
-								]}
-							/>
-							<Button disabled={assigneeValue === null}>Assign</Button>
+							{activeTab === 'parcels' && (
+								<Select
+									w={240}
+									placeholder='Filter by Sender township'
+									clearable
+									value={senderTownshipValue}
+									onChange={setSenderTownshipValue}
+									data={townshipData}
+								/>
+							)}
+							{activeTab === 'arrived_warehouse' && (
+								<Select
+									w={240}
+									placeholder='Filter by Receiver township'
+									clearable
+									value={receiverTownshipValue}
+									onChange={setReceiverTownshipValue}
+									data={townshipData}
+								/>
+							)}
+							{['parcels', 'arrived_warehouse'].includes(activeTab) && (
+								<>
+									<Select
+										w={150}
+										placeholder='Assign to'
+										clearable
+										value={assigneeValue}
+										onChange={setAssigneeValue}
+										data={delivers}
+									/>
+									<Button
+										disabled={
+											assigneeValue === null || selectedRowsIds.length === 0
+										}
+										onClick={assignHandler}
+									>
+										Assign
+									</Button>
+								</>
+							)}
 						</Group>
 					</Group>
 
@@ -138,27 +247,36 @@ export default function Home() {
 								There is no booking parcels.
 							</Center>
 						) : (
-							<ParcelTable data={parcelsBooking} />
+							<ParcelTable
+								data={parcelsBooking}
+								getSelectedRows={getSelectedRowsHandler}
+							/>
 						)}
 					</Tabs.Panel>
 
-					<Tabs.Panel value='pick up' mt={10}>
+					<Tabs.Panel value='picked_up' mt={10}>
 						{pickUpParcels.length === 0 ? (
 							<Center w={'100%'} h={'70svh'}>
 								There is no picking up parcels.
 							</Center>
 						) : (
-							<ParcelTable data={pickUpParcels} />
+							<ParcelTable
+								data={pickUpParcels}
+								getSelectedRows={getSelectedRowsHandler}
+							/>
 						)}
 					</Tabs.Panel>
 
-					<Tabs.Panel value='warehouse' mt={10}>
+					<Tabs.Panel value='arrived_warehouse' mt={10}>
 						{arrivedWarehouseParcels.length === 0 ? (
 							<Center w={'100%'} h={'70svh'}>
 								There is no parcels at warehouse.
 							</Center>
 						) : (
-							<ParcelTable data={arrivedWarehouseParcels} />
+							<ParcelTable
+								data={arrivedWarehouseParcels}
+								getSelectedRows={getSelectedRowsHandler}
+							/>
 						)}
 					</Tabs.Panel>
 
@@ -168,7 +286,10 @@ export default function Home() {
 								There is no delivering parcels.
 							</Center>
 						) : (
-							<ParcelTable data={deliverParcels} />
+							<ParcelTable
+								data={deliverParcels}
+								getSelectedRows={getSelectedRowsHandler}
+							/>
 						)}
 					</Tabs.Panel>
 
@@ -178,13 +299,14 @@ export default function Home() {
 								There is no parcels that finished.
 							</Center>
 						) : (
-							<ParcelTable data={finishParcels} />
+							<ParcelTable
+								data={finishParcels}
+								getSelectedRows={getSelectedRowsHandler}
+							/>
 						)}
 					</Tabs.Panel>
 				</StyledTabs>
 			</Stack>
-
-			<pre>{JSON.stringify(deliver, null, 3)}</pre>
 		</>
 	);
 }

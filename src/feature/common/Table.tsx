@@ -49,6 +49,7 @@ interface ITableProps<D> {
 	/**  */
 	onRowClick?: (val: string) => void;
 
+	// careful not to forget to use 'useCallback'
 	onSelectedRowsChange?: (val: D[]) => void;
 }
 

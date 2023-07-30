@@ -24,7 +24,7 @@ export const CreateDeliveryEmployee = (props: Props) => {
 	const utils = api.useContext();
 
 	const createDeliver = api.auth.signUp.useMutation({
-		onSuccess(data) {
+		onSuccess() {
 			void utils.deliver.getDelivers.invalidate();
 			close();
 
