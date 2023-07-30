@@ -9,6 +9,8 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconAlarm, IconCheck } from '@tabler/icons-react';
+import { GetServerSidePropsContext } from 'next';
+import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useCallback, useState } from 'react';
 import { StyledTabs } from '~/feature/common/CustomTabs';
@@ -321,4 +323,20 @@ export default function Home() {
 			</Stack>
 		</>
 	);
+}
+
+export async function getServerSideProps(_context: GetServerSidePropsContext) {
+	const session = await getSession({ req: _context.req });
+
+	if (session?.user.role && ['picker', 'deliver'].includes(session.user.role)) {
+		return {
+			redirect: {
+				destination: '/employee',
+				permanent: false,
+			},
+		};
+	}
+	return {
+		props: {}, // will be passed to the page component as props
+	};
 }

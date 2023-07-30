@@ -21,8 +21,6 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
 	const router = useRouter();
 
-	// console.log('session', session);
-
 	const layoutIgnoreRoutes = ['/profile', '/login', '/404', '/500'];
 	const shouldHideLayout = layoutIgnoreRoutes.includes(router.pathname);
 

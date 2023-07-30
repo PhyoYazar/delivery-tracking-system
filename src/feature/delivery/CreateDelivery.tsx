@@ -167,17 +167,13 @@ export const CreateDeliveryEmployee = (props: Props) => {
 				</ScrollArea>
 
 				<Group noWrap position='right'>
-					<Box onClick={() => close()}>
-						<Button component={Box} variant='outline' color='gray'>
+					<Box onClick={() => !createDeliver.isLoading && close()}>
+						<Button w={120} component={Box} variant='outline' color='gray'>
 							Cancel
 						</Button>
 					</Box>
-					<Button type='submit'>
-						{createDeliver.isLoading ? (
-							<Loader size='sm' color='gray' />
-						) : (
-							'Create'
-						)}
+					<Button w={120} type='submit' disabled={createDeliver.isLoading}>
+						{createDeliver.isLoading ? <Loader size='sm' /> : 'Create'}
 					</Button>
 				</Group>
 			</Stack>

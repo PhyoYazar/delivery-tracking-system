@@ -1,24 +1,19 @@
-import { Box, Center } from '@mantine/core';
-import type { GetServerSidePropsContext } from 'next';
+import { type GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
-import { Login } from '~/feature/auth/Login';
 
-const LoginPage = () => {
-	return (
-		<Box component='main' w='100vw' h='100vh'>
-			<Center h='100%'>
-				<Login />
-			</Center>
-		</Box>
-	);
+const EmployeePage = () => {
+	return <div>EmployeePage</div>;
 };
 
-export default LoginPage;
+export default EmployeePage;
 
 export async function getServerSideProps(_context: GetServerSidePropsContext) {
 	const session = await getSession({ req: _context.req });
 
-	if (session) {
+	if (
+		session?.user.role &&
+		!['picker', 'deliver'].includes(session.user.role)
+	) {
 		return {
 			redirect: {
 				destination: '/',
