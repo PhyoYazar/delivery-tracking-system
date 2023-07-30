@@ -5,6 +5,7 @@ import {
 	Loader,
 	PasswordInput,
 	ScrollArea,
+	Select,
 	Stack,
 	TextInput,
 } from '@mantine/core';
@@ -57,18 +58,20 @@ export const CreateDeliveryEmployee = (props: Props) => {
 			township_id: null,
 			password: '',
 			passwordConfirm: '',
+			role: '',
 		},
 
 		validate: {
-			name: isNotEmpty('Name cannot be empty'),
+			name: isNotEmpty('Name must be empty'),
 			email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-			phone_number: isNotEmpty('Phone number cannot be empty'),
-			address: isNotEmpty('Address cannot be empty'),
+			phone_number: isNotEmpty('Phone number must be empty'),
+			address: isNotEmpty('Address must be empty'),
 			password: hasLength(
 				{ min: 6 },
 				'Name must be at least 6 characters long',
 			),
 			passwordConfirm: matchesField('password', 'Passwords are not the same'),
+			role: isNotEmpty('Role must not be empty'),
 		},
 	});
 
@@ -81,6 +84,7 @@ export const CreateDeliveryEmployee = (props: Props) => {
 			password: deliverInfo.password,
 			city_id: deliverInfo.city_id,
 			township_id: deliverInfo.township_id,
+			role: deliverInfo.role,
 		};
 
 		createDeliver.mutate({ ...obj });
@@ -147,6 +151,17 @@ export const CreateDeliveryEmployee = (props: Props) => {
 							placeholder='123Je#$'
 							withAsterisk
 							{...form.getInputProps('passwordConfirm')}
+						/>
+
+						<Select
+							label='Role'
+							withAsterisk
+							placeholder='Pick one'
+							data={[
+								{ value: 'picker', label: 'Picker' },
+								{ value: 'deliver', label: 'Deliver' },
+							]}
+							{...form.getInputProps('role')}
 						/>
 					</Stack>
 				</ScrollArea>

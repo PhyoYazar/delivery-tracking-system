@@ -1,11 +1,14 @@
-import { Button, Group, Modal, Stack, Text, Title } from '@mantine/core';
+import { Button, Group, Modal, Stack, Tabs, Title } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useState } from 'react';
 import { CenterLoader } from '~/feature/common/CenterLoader';
+import { StyledTabs } from '~/feature/common/CustomTabs';
 import { CreateDeliveryEmployee } from '~/feature/delivery/CreateDelivery';
 import { DeliverTable } from '~/feature/delivery/DeliverTable';
 import { api } from '~/utils/api';
 
 const DeliEmployeePage = () => {
+	const [activeTab, setActiveTab] = useState<string | null>('picker');
 	const [opened, { open, close }] = useDisclosure(false);
 
 	const { data: delivers, isLoading } = api.deliver.getDelivers.useQuery();
@@ -18,15 +21,28 @@ const DeliEmployeePage = () => {
 		return <div>Error</div>;
 	}
 
+	const picker = delivers.filter((deli) => deli.role === 'picker');
+	const deliver = delivers.filter((deli) => deli.role === 'deliver');
+
 	return (
 		<Stack>
-			<Group position='apart'>
-				<Text>Delivery Information</Text>
+			<StyledTabs value={activeTab} onTabChange={setActiveTab}>
+				<Group position='apart'>
+					<Tabs.List>
+						<Tabs.Tab value='picker'>Picker</Tabs.Tab>
+						<Tabs.Tab value='deliver'>Deliver</Tabs.Tab>
+					</Tabs.List>
+					<Button onClick={open}>Create Deliver</Button>
+				</Group>
 
-				<Button onClick={open}>Create Deliver</Button>
-			</Group>
+				<Tabs.Panel value='picker' mt={10}>
+					<DeliverTable data={picker} />
+				</Tabs.Panel>
 
-			<DeliverTable data={delivers} />
+				<Tabs.Panel value='deliver' mt={10}>
+					<DeliverTable data={deliver} />
+				</Tabs.Panel>
+			</StyledTabs>
 
 			<Modal
 				opened={opened}

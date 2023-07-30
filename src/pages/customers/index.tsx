@@ -43,9 +43,6 @@ const CustomersPage = () => {
 					<ReceiverTable data={receivers} />
 				</Tabs.Panel>
 			</StyledTabs>
-
-			<pre>{JSON.stringify(senders, null, 3)}</pre>
-			<pre>{JSON.stringify(receivers, null, 3)}</pre>
 		</Stack>
 	);
 };

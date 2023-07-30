@@ -17,6 +17,8 @@ export const authRouter = createTRPCRouter({
 				address: z.string(),
 				township_id: z.string().nullable(),
 				city_id: z.string().nullable(),
+				role: z.string(),
+				// role: z.enum(['picker', 'deliver']),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {

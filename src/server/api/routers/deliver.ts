@@ -16,7 +16,7 @@ export const deliverRouter = createTRPCRouter({
 
 	getDelivers: protectedProcedure.query(async ({ ctx }) => {
 		const [response, error] = await ctx.api
-			.get<Deliver[]>('/user?role=deliver')
+			.get<Deliver[]>('/user')
 			.then((res) => [res, null] as const)
 			.catch((e: unknown) => [null, e] as const);
 

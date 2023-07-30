@@ -20,6 +20,7 @@ export interface CreateDeliverForm {
 	name: string;
 	email: string;
 	password: string;
+	role: string;
 	passwordConfirm: string;
 	phone_number: string;
 	address: string;
