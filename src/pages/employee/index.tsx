@@ -9,7 +9,7 @@ import {
 	TextInput,
 	Title,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconAlarm, IconCheck } from '@tabler/icons-react';
 import { type GetServerSidePropsContext } from 'next';
@@ -24,6 +24,7 @@ const EmployeePage = () => {
 	const [activeTab, setActiveTab] = useState<string | null>('unfinish');
 	const [selectedId, setSelectedId] = useState<string>('');
 	const [address, setAddress] = useState('');
+	const [debouncedAddress] = useDebouncedValue(address, 500);
 
 	const [opened, { open, close }] = useDisclosure(false);
 	const utils = api.useContext();
@@ -31,8 +32,18 @@ const EmployeePage = () => {
 
 	const isPicker = data?.user.role === 'picker';
 
-	const { data: parcels, isLoading: isPickedUpLoading } =
-		api.parcel.getParcelsByUser.useQuery();
+	const obj: { sender_address?: string; receiver_address?: string } = {};
+	if (debouncedAddress.length !== 0) {
+		if (isPicker) {
+			obj['sender_address'] = debouncedAddress;
+		} else {
+			obj['receiver_address'] = debouncedAddress;
+		}
+	}
+
+	const { data: parcels, isLoading } = api.parcel.getParcelsByUser.useQuery({
+		...obj,
+	});
 
 	const updateParcel = api.parcel.updateParcel.useMutation({
 		onSuccess: () => {
@@ -61,23 +72,29 @@ const EmployeePage = () => {
 		},
 	});
 
-	if (isPickedUpLoading) {
-		return <CenterLoader />;
-	}
+	// if (isLoading) {
+	// 	return <CenterLoader />;
+	// }
 
-	if (parcels === 'Error' || parcels === undefined) {
-		return <div>Error</div>;
-	}
+	// if (parcels === 'Error' || parcels === undefined) {
+	// 	return <div>Error</div>;
+	// }
 
-	const unfinishParcels = parcels.filter((parcel) =>
-		isPicker
-			? parcel.picked_up && !parcel.arrived_warehouse
-			: parcel.deliver && !parcel.finish,
-	);
+	const unfinishParcels =
+		!isLoading && parcels !== 'Error' && parcels !== undefined
+			? parcels.filter((parcel) =>
+					isPicker
+						? parcel.picked_up && !parcel.arrived_warehouse
+						: parcel.deliver && !parcel.finish,
+			  )
+			: [];
 
-	const finishParcels = parcels.filter((parcel) =>
-		isPicker ? parcel.arrived_warehouse : parcel.finish,
-	);
+	const finishParcels =
+		!isLoading && parcels !== 'Error' && parcels !== undefined
+			? parcels.filter((parcel) =>
+					isPicker ? parcel.arrived_warehouse : parcel.finish,
+			  )
+			: [];
 
 	const selectIdHandler = (id: string) => {
 		setSelectedId(id);
@@ -111,31 +128,41 @@ const EmployeePage = () => {
 					</Tabs.List>
 					<TextInput
 						w={250}
-						placeholder={`Filter by ${
-							isPicker ? 'sender' : 'receiver'
-						} address`}
+						placeholder={`Filter by address`}
 						value={address}
 						onChange={(event) => setAddress(event.currentTarget.value)}
 					/>
 				</Group>
 
 				<Tabs.Panel value='unfinish' mt={10}>
-					<EmployeeParcelTable
-						showAction
-						data={unfinishParcels}
-						selectIdHandler={selectIdHandler}
-						openModal={open}
-						isDeliver={!isPicker}
-					/>
+					{isLoading ? (
+						<CenterLoader />
+					) : unfinishParcels.length === 0 ? (
+						<Center h={'60svh'}>No Data</Center>
+					) : (
+						<EmployeeParcelTable
+							showAction
+							data={unfinishParcels}
+							selectIdHandler={selectIdHandler}
+							openModal={open}
+							isDeliver={!isPicker}
+						/>
+					)}
 				</Tabs.Panel>
 
 				<Tabs.Panel value='finish' mt={10}>
-					<EmployeeParcelTable
-						data={finishParcels}
-						selectIdHandler={selectIdHandler}
-						openModal={open}
-						isDeliver={!isPicker}
-					/>
+					{isLoading ? (
+						<CenterLoader />
+					) : finishParcels.length === 0 ? (
+						<Center h={'60svh'}>No Data</Center>
+					) : (
+						<EmployeeParcelTable
+							data={finishParcels}
+							selectIdHandler={selectIdHandler}
+							openModal={open}
+							isDeliver={!isPicker}
+						/>
+					)}
 				</Tabs.Panel>
 			</StyledTabs>
 

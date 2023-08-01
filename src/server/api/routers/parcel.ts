@@ -53,6 +53,8 @@ export const parcelRouter = createTRPCRouter({
 					address: z.string().optional(),
 					sender_township: z.string().nullable().optional(),
 					receiver_township: z.string().nullable().optional(),
+					sender_address: z.string().nullable().optional(),
+					receiver_address: z.string().nullable().optional(),
 				})
 				.optional(),
 		)
