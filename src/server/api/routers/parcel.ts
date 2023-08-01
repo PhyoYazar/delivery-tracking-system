@@ -42,6 +42,33 @@ export const parcelRouter = createTRPCRouter({
 			return response.data;
 		}),
 
+	getParcelsByUser: protectedProcedure
+		.input(
+			z
+				.object({
+					picked_up: z.boolean().optional(),
+					arrived_warehouse: z.boolean().optional(),
+					deliver: z.boolean().optional(),
+					finish: z.boolean().optional(),
+					address: z.string().optional(),
+					sender_township: z.string().nullable().optional(),
+					receiver_township: z.string().nullable().optional(),
+				})
+				.optional(),
+		)
+		.query(async ({ input, ctx }) => {
+			const [response, error] = await ctx.api
+				.get<ParcelResponse[]>('/parcels/user', { params: input })
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
+
+			if (response === null || error) {
+				return 'Error';
+			}
+
+			return response.data;
+		}),
+
 	updateParcels: protectedProcedure
 		.input(
 			z.object({
@@ -70,5 +97,30 @@ export const parcelRouter = createTRPCRouter({
 			}
 
 			return response?.data;
+		}),
+
+	updateParcel: protectedProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				picked_up: z.boolean().optional(),
+				finish: z.boolean().optional(),
+				arrived_warehouse: z.boolean().optional(),
+				deliver: z.boolean().optional(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const { id, ...others } = input;
+
+			const [response, error] = await ctx.api
+				.patch<ParcelResponse[]>(`/parcels/${id}`, others)
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
+
+			if (response === null || error) {
+				return 'Error';
+			}
+
+			return response.data;
 		}),
 });

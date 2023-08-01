@@ -15,12 +15,16 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 			// layout='alt'
 			padding='md'
 			navbar={
-				data?.user.role && ['deliver', 'picker'].includes(data.user.role) ? (
-					<></>
+				data?.user.role ? (
+					['deliver', 'picker'].includes(data.user.role) ? (
+						<></>
+					) : (
+						<Navbar width={{ base: navbarLayoutWidth }} p='sm'>
+							<NavSidebar />
+						</Navbar>
+					)
 				) : (
-					<Navbar width={{ base: navbarLayoutWidth }} p='sm'>
-						<NavSidebar />
-					</Navbar>
+					<></>
 				)
 			}
 			header={

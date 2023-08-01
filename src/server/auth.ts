@@ -15,7 +15,7 @@ import ApiClient from './apiClient';
  * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
  */
 declare module 'next-auth' {
-	type Role = 'deliver' | 'admin' | 'super_admin';
+	type Role = 'picker' | 'deliver' | 'admin' | 'super_admin';
 
 	interface Session extends DefaultSession {
 		user: {

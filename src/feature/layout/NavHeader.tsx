@@ -1,10 +1,20 @@
-import { ActionIcon, Box, Flex, Menu, Title } from '@mantine/core';
+import {
+	Box,
+	Flex,
+	Group,
+	Menu,
+	Text,
+	Title,
+	useMantineTheme,
+} from '@mantine/core';
 import { IconLogout, IconUserCircle } from '@tabler/icons-react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 export const NavHeader = () => {
 	const router = useRouter();
+	const theme = useMantineTheme();
+	const { data } = useSession();
 
 	return (
 		<Flex h='100%' align='center' justify={'space-between'}>
@@ -16,9 +26,12 @@ export const NavHeader = () => {
 
 			<Menu shadow='md' width={260} position='bottom-end'>
 				<Menu.Target>
-					<ActionIcon>
-						<IconUserCircle size={40} />
-					</ActionIcon>
+					<Group spacing={10} sx={{ cursor: 'pointer' }}>
+						<IconUserCircle size={28} color={theme.colors.gray[6]} />
+						<Text fw={500} fz={'sm'} c='gray.6'>
+							{data?.user.name}
+						</Text>
+					</Group>
 				</Menu.Target>
 
 				<Menu.Dropdown>

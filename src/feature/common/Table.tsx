@@ -12,7 +12,7 @@ import {
 	type RowSelectionState,
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 // type ExtractId<D> = D & { id: string | number};
 
@@ -68,7 +68,7 @@ export function Table<D>({
 	const router = useRouter();
 	const { classes } = useStyles();
 
-	const [defaultData, setDefaultData] = useState(data);
+	const defaultData = useMemo(() => data, [data]);
 	const [defaultColumns] = useState<typeof columns>(() => [...columns]);
 
 	const table = useReactTable({
@@ -88,15 +88,11 @@ export function Table<D>({
 		);
 	}, [rowSelection, table, onSelectedRowsChange]);
 
-	useEffect(() => {
-		setDefaultData(data);
-	}, [data]);
-
 	return (
 		<Box
 			component={ScrollArea}
 			type='always'
-			offsetScrollbars
+			// offsetScrollbars
 			styles={(theme) => ({
 				scrollbar: {
 					'zIndex': 10,
