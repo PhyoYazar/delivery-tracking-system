@@ -24,6 +24,18 @@ export const CreateDeliveryEmployee = (props: Props) => {
 
 	const utils = api.useContext();
 
+	// const { data: city } = api.location.getCity.useQuery();
+	const { data: township, isLoading: townshipIsLoading } =
+		api.location.getTownship.useQuery();
+
+	const townshipData =
+		!townshipIsLoading && township !== 'Error' && township !== undefined
+			? township.map((town) => ({
+					value: town.id,
+					label: town.name,
+			  }))
+			: [{ value: '', label: '' }];
+
 	const createDeliver = api.auth.signUp.useMutation({
 		onSuccess() {
 			void utils.deliver.getDelivers.invalidate();
@@ -62,10 +74,12 @@ export const CreateDeliveryEmployee = (props: Props) => {
 		},
 
 		validate: {
-			name: isNotEmpty('Name must be empty'),
+			name: isNotEmpty('Name must not be empty'),
 			email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-			phone_number: isNotEmpty('Phone number must be empty'),
-			address: isNotEmpty('Address must be empty'),
+			phone_number: isNotEmpty('Phone number must not be empty'),
+			address: isNotEmpty('Address must not be empty'),
+			township_id: isNotEmpty('Township must not be empty'),
+			city_id: isNotEmpty('City must not be empty'),
 			password: hasLength(
 				{ min: 6 },
 				'Name must be at least 6 characters long',
@@ -125,17 +139,29 @@ export const CreateDeliveryEmployee = (props: Props) => {
 						/>
 
 						<Group noWrap>
-							<TextInput
-								w='100%'
+							<Select
+								withAsterisk
+								w={'100%'}
 								label='Township'
-								placeholder='Hlaing'
-								{...form.getInputProps('township')}
+								placeholder='township'
+								clearable
+								data={townshipData}
+								{...form.getInputProps('township_id')}
 							/>
-							<TextInput
-								w='100%'
+
+							<Select
+								withAsterisk
+								w={'100%'}
 								label='City'
-								placeholder='Yangon'
-								{...form.getInputProps('city')}
+								placeholder='city'
+								clearable
+								data={[
+									{
+										label: 'Yangon',
+										value: '3000b4c7-b1c5-4591-a7a3-8a7d81031a34',
+									},
+								]}
+								{...form.getInputProps('city_id')}
 							/>
 						</Group>
 

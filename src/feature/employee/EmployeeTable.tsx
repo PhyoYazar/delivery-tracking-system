@@ -1,6 +1,6 @@
-import { Box, Button, Flex, Group } from '@mantine/core';
+import { Box, Button } from '@mantine/core';
 import { type ColumnDef } from '@tanstack/table-core';
-import { useMemo, type ReactNode } from 'react';
+import { useMemo } from 'react';
 import type { ParcelResponse } from '~/types/parcel-api';
 import { Table } from '../common/Table';
 import { TableTextBox } from '../common/TableTextBox';
@@ -9,68 +9,68 @@ interface ParcelProps {
 	data: ParcelResponse[];
 	isDeliver: boolean;
 	showAction?: boolean;
+	actionIsLoading?: boolean;
 	getSelectedRows?: (val: ParcelResponse[]) => void;
-	selectIdHandler: (id: string) => void;
-	openModal: () => void;
+	acceptHandler?: (id: string) => void;
 }
 
 export const EmployeeParcelTable = (props: ParcelProps) => {
 	const {
 		data,
 		isDeliver,
+		actionIsLoading = false,
 		showAction = false,
-		openModal,
-		selectIdHandler,
+		acceptHandler,
 	} = props;
 
-	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(() => {
-		const columns: ColumnDef<ParcelResponse>[] = [
-			{
-				// TODO: checkbox accessorKey should be "id"
-				accessorKey: 'product_id',
-				accessorFn: (row) => row.id.slice(0, 5),
-				header: ({ table }) => {
-					return (
-						<Group spacing={12} noWrap>
-							{/* <Checkbox
-								size='xs'
-								checked={table.getIsAllRowsSelected()}
-								indeterminate={table.getIsSomeRowsSelected()}
-								onChange={(e) => {
-									table.getToggleAllRowsSelectedHandler()(e);
-								}}
-							/> */}
+	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(
+		() => [
+			// {
+			// 	// TODO: checkbox accessorKey should be "id"
+			// 	accessorKey: 'product_id',
+			// 	accessorFn: (row) => row.id.slice(0, 5),
+			// 	header: ({ table }) => {
+			// 		return (
+			// 			<Group spacing={12} noWrap>
+			// 				{/* <Checkbox
+			// 					size='xs'
+			// 					checked={table.getIsAllRowsSelected()}
+			// 					indeterminate={table.getIsSomeRowsSelected()}
+			// 					onChange={(e) => {
+			// 						table.getToggleAllRowsSelectedHandler()(e);
+			// 					}}
+			// 				/> */}
 
-							<TableTextBox>Product ID</TableTextBox>
-						</Group>
-					);
-				},
-				cell: ({ getValue, row }) => (
-					<Flex align='center' gap={12}>
-						{/* <Checkbox
-							size='xs'
-							{...{
-								checked: row.getIsSelected(),
-								disabled: !row.getCanSelect(),
-								indeterminate: row.getIsSomeSelected(),
-								onClick: (e) => e.stopPropagation(),
-							}}
-							onChange={(e) => {
-								row.getToggleSelectedHandler()(e);
-							}}
-						/> */}
+			// 				<TableTextBox>Product ID</TableTextBox>
+			// 			</Group>
+			// 		);
+			// 	},
+			// 	cell: ({ getValue, row }) => (
+			// 		<Flex align='center' gap={12}>
+			// 			{/* <Checkbox
+			// 				size='xs'
+			// 				{...{
+			// 					checked: row.getIsSelected(),
+			// 					disabled: !row.getCanSelect(),
+			// 					indeterminate: row.getIsSomeSelected(),
+			// 					onClick: (e) => e.stopPropagation(),
+			// 				}}
+			// 				onChange={(e) => {
+			// 					row.getToggleSelectedHandler()(e);
+			// 				}}
+			// 			/> */}
 
-						<TableTextBox tt={'uppercase'}>
-							{getValue() as ReactNode}
-						</TableTextBox>
-					</Flex>
-				),
-			},
+			// 			<TableTextBox tt={'uppercase'}>
+			// 				{getValue() as ReactNode}
+			// 			</TableTextBox>
+			// 		</Flex>
+			// 	),
+			// },
 			{
-				id: 'price',
-				accessorFn: (row) => row.price,
+				id: 'parcel_name',
+				accessorFn: (row) => row.name,
 				cell: (info) => info.getValue(),
-				header: () => <TableTextBox>Price</TableTextBox>,
+				header: () => <TableTextBox>Parcel Name</TableTextBox>,
 			},
 			{
 				id: 'customer_name',
@@ -92,10 +92,15 @@ export const EmployeeParcelTable = (props: ParcelProps) => {
 			// 	accessorFn: (row) => row.user.,
 			// 	header: () => 'Deliver',
 			// },
-		];
+		],
+		[isDeliver],
+	);
 
-		if (showAction) {
-			columns.push({
+	let columns: ColumnDef<ParcelResponse>[];
+
+	if (showAction) {
+		const accept: ColumnDef<ParcelResponse>[] = [
+			{
 				accessorKey: 'id',
 				accessorFn: (row) => row.id,
 				header: () => (
@@ -106,28 +111,31 @@ export const EmployeeParcelTable = (props: ParcelProps) => {
 				cell: ({ getValue }) => (
 					<Box pl={50}>
 						<Button
+							disabled={actionIsLoading}
+							loading={actionIsLoading}
 							size='sm'
 							onClick={(e) => {
 								e.stopPropagation();
-								openModal();
-								selectIdHandler(getValue() as string);
+								acceptHandler?.(getValue() as string);
 							}}
 						>
-							Done
+							Accept
 						</Button>
 					</Box>
 				),
-			});
-		}
+			},
+		];
 
-		return columns;
-	}, [selectIdHandler, openModal, showAction, isDeliver]);
+		columns = [...defaultColumns, ...accept];
+	} else {
+		columns = [...defaultColumns];
+	}
 
 	return (
 		<Box pr={20}>
 			<Table
 				data={data}
-				columns={defaultColumns}
+				columns={columns}
 				autoColumnWidth
 				withBorder
 				disabledRowClickDetail

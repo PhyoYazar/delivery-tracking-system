@@ -1,12 +1,4 @@
-import {
-	Button,
-	Center,
-	Group,
-	Loader,
-	Select,
-	Stack,
-	Tabs,
-} from '@mantine/core';
+import { Center, Group, Loader, Select, Stack, Tabs } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconAlarm, IconCheck } from '@tabler/icons-react';
 import { GetServerSidePropsContext } from 'next';
@@ -225,7 +217,7 @@ export default function Home() {
 									data={townshipData}
 								/>
 							)}
-							{['parcels', 'arrived_warehouse'].includes(activeTab) && (
+							{/* {['parcels', 'arrived_warehouse'].includes(activeTab) && (
 								<>
 									<Select
 										w={150}
@@ -251,7 +243,7 @@ export default function Home() {
 										)}
 									</Button>
 								</>
-							)}
+							)} */}
 						</Group>
 					</Group>
 
@@ -262,6 +254,7 @@ export default function Home() {
 							</Center>
 						) : (
 							<ParcelTable
+								tabType='parcels'
 								data={parcelsBooking}
 								getSelectedRows={getSelectedRowsHandler}
 							/>
@@ -288,6 +281,7 @@ export default function Home() {
 							</Center>
 						) : (
 							<ParcelTable
+								tabType='warehouse'
 								data={arrivedWarehouseParcels}
 								getSelectedRows={getSelectedRowsHandler}
 							/>

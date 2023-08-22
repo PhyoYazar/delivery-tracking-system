@@ -1,4 +1,5 @@
 import {
+	Box,
 	Button,
 	Center,
 	Group,
@@ -21,8 +22,7 @@ import { EmployeeParcelTable } from '~/feature/employee/EmployeeTable';
 import { api } from '~/utils/api';
 
 const EmployeePage = () => {
-	const [activeTab, setActiveTab] = useState<string | null>('unfinish');
-	const [selectedId, setSelectedId] = useState<string>('');
+	const [activeTab, setActiveTab] = useState<string | null>('parcels');
 	const [address, setAddress] = useState('');
 	const [debouncedAddress] = useDebouncedValue(address, 500);
 
@@ -50,7 +50,30 @@ const EmployeePage = () => {
 			void utils.parcel.getParcelsByUser.invalidate();
 
 			notifications.show({
-				message: 'Successfully updated.',
+				message: 'Accept the parcel Successfully!',
+				icon: <IconCheck size='1rem' />,
+				autoClose: true,
+				withCloseButton: true,
+				color: 'green',
+			});
+		},
+		onError: () => {
+			notifications.show({
+				message: 'Failed to accept the parcel. Please try again',
+				icon: <IconAlarm size='1rem' />,
+				autoClose: true,
+				withCloseButton: true,
+				color: 'red',
+			});
+		},
+	});
+
+	const updateManyParcels = api.parcel.updateParcels.useMutation({
+		onSuccess: () => {
+			void utils.parcel.getParcelsByUser.invalidate();
+
+			notifications.show({
+				message: 'Success!',
 				icon: <IconCheck size='1rem' />,
 				autoClose: true,
 				withCloseButton: true,
@@ -61,7 +84,7 @@ const EmployeePage = () => {
 		},
 		onError: () => {
 			notifications.show({
-				message: 'Failed to update. Please try again',
+				message: 'Failed. Please try again',
 				icon: <IconAlarm size='1rem' />,
 				autoClose: true,
 				withCloseButton: true,
@@ -80,14 +103,29 @@ const EmployeePage = () => {
 	// 	return <div>Error</div>;
 	// }
 
+	const accept_parcels =
+		!isLoading && parcels !== 'Error' && parcels !== undefined
+			? parcels.filter((parcel) =>
+					isPicker
+						? !parcel.accept_picked_up && !parcel.picked_up
+						: parcel.arrived_warehouse &&
+						  !parcel.accept_deliver &&
+						  !parcel.deliver,
+			  )
+			: [];
+
 	const unfinishParcels =
 		!isLoading && parcels !== 'Error' && parcels !== undefined
 			? parcels.filter((parcel) =>
 					isPicker
-						? parcel.picked_up && !parcel.arrived_warehouse
-						: parcel.deliver && !parcel.finish,
+						? parcel.accept_picked_up && !parcel.arrived_warehouse
+						: parcel.accept_deliver && !parcel.finish,
 			  )
 			: [];
+
+	const isStarted = unfinishParcels.every((p) =>
+		isPicker ? p.picked_up : p.deliver,
+	);
 
 	const finishParcels =
 		!isLoading && parcels !== 'Error' && parcels !== undefined
@@ -96,15 +134,51 @@ const EmployeePage = () => {
 			  )
 			: [];
 
-	const selectIdHandler = (id: string) => {
-		setSelectedId(id);
+	const acceptHandler = (id: string) => {
+		if (id === '') return;
+
+		const obj: {
+			id: string;
+			accept_picked_up?: boolean;
+			accept_deliver?: boolean;
+		} = {
+			id,
+		};
+
+		if (isPicker) {
+			obj['accept_picked_up'] = true;
+		} else {
+			obj['accept_deliver'] = true;
+		}
+
+		updateParcel.mutate(obj);
+	};
+
+	const startHandler = () => {
+		if (unfinishParcels.length === 0) return;
+
+		const obj: { parcels: string[]; picked_up?: boolean; deliver?: boolean } = {
+			parcels: unfinishParcels.map((p) => p.id),
+		};
+
+		if (isPicker) {
+			obj['picked_up'] = true;
+		} else {
+			obj['deliver'] = true;
+		}
+
+		updateManyParcels.mutate(obj);
 	};
 
 	const confirmHandler = () => {
-		if (selectedId === '') return;
+		if (unfinishParcels.length === 0) return;
 
-		const obj: { id: string; arrived_warehouse?: boolean; finish?: boolean } = {
-			id: selectedId,
+		const obj: {
+			parcels: string[];
+			arrived_warehouse?: boolean;
+			finish?: boolean;
+		} = {
+			parcels: unfinishParcels.map((p) => p.id),
 		};
 
 		if (isPicker) {
@@ -113,19 +187,58 @@ const EmployeePage = () => {
 			obj['finish'] = true;
 		}
 
-		updateParcel.mutate(obj);
+		updateManyParcels.mutate(obj);
 	};
 
 	return (
 		<>
 			<StyledTabs value={activeTab} onTabChange={setActiveTab}>
 				<Group position='apart'>
-					<Tabs.List>
-						<Tabs.Tab value='unfinish'>
-							{isPicker ? 'Pick Up' : 'Deliver'}
-						</Tabs.Tab>
-						<Tabs.Tab value='finish'>Done</Tabs.Tab>
-					</Tabs.List>
+					<Group sx={{ position: 'relative' }}>
+						<Box
+							sx={(theme) => ({
+								position: 'absolute',
+								top: -5,
+								left: -5,
+								padding: 1,
+								fontSize: theme.fontSizes.sm,
+								borderRadius: 100,
+								width: 18,
+								backgroundColor: accept_parcels.length > 0 ? 'red' : '#ababab',
+								color: accept_parcels.length === 0 ? '#333' : '#f7f7f7',
+								textAlign: 'center',
+							})}
+						>
+							{accept_parcels.length}
+						</Box>
+
+						<Tabs.List>
+							<Tabs.Tab value='parcels'>Parcels</Tabs.Tab>
+							<Tabs.Tab value='unfinish'>
+								{isPicker ? 'Pick Up' : 'Deliver'}
+							</Tabs.Tab>
+							<Tabs.Tab value='finish'>Done</Tabs.Tab>
+						</Tabs.List>
+						<Button
+							loading={updateManyParcels.isLoading}
+							disabled={updateManyParcels.isLoading || isStarted}
+							onClick={startHandler}
+						>
+							{isPicker ? 'Start Pick up' : 'Start Deliver'}
+						</Button>
+						<Button
+							loading={updateManyParcels.isLoading}
+							disabled={
+								updateManyParcels.isLoading ||
+								!isStarted ||
+								unfinishParcels.length === 0
+							}
+							onClick={() => open()}
+						>
+							Finish
+						</Button>
+					</Group>
+
 					<TextInput
 						w={250}
 						placeholder={`Filter by address`}
@@ -134,19 +247,29 @@ const EmployeePage = () => {
 					/>
 				</Group>
 
+				<Tabs.Panel value='parcels' mt={10}>
+					{isLoading ? (
+						<CenterLoader />
+					) : accept_parcels.length === 0 ? (
+						<Center h={'60svh'}>No Data</Center>
+					) : (
+						<EmployeeParcelTable
+							actionIsLoading={updateParcel.isLoading}
+							showAction
+							data={accept_parcels}
+							acceptHandler={acceptHandler}
+							isDeliver={false}
+						/>
+					)}
+				</Tabs.Panel>
+
 				<Tabs.Panel value='unfinish' mt={10}>
 					{isLoading ? (
 						<CenterLoader />
 					) : unfinishParcels.length === 0 ? (
 						<Center h={'60svh'}>No Data</Center>
 					) : (
-						<EmployeeParcelTable
-							showAction
-							data={unfinishParcels}
-							selectIdHandler={selectIdHandler}
-							openModal={open}
-							isDeliver={!isPicker}
-						/>
+						<EmployeeParcelTable data={unfinishParcels} isDeliver={!isPicker} />
 					)}
 				</Tabs.Panel>
 
@@ -156,12 +279,7 @@ const EmployeePage = () => {
 					) : finishParcels.length === 0 ? (
 						<Center h={'60svh'}>No Data</Center>
 					) : (
-						<EmployeeParcelTable
-							data={finishParcels}
-							selectIdHandler={selectIdHandler}
-							openModal={open}
-							isDeliver={!isPicker}
-						/>
+						<EmployeeParcelTable data={finishParcels} isDeliver={!isPicker} />
 					)}
 				</Tabs.Panel>
 			</StyledTabs>
@@ -169,7 +287,9 @@ const EmployeePage = () => {
 			<Modal opened={opened} onClose={close} centered>
 				<Stack spacing={40}>
 					<Center>
-						<Title color='gray.8'>Are you Sure?</Title>
+						<Title color='gray.8'>
+							{isPicker ? 'Picking' : 'Delivering'} the parcels are done?
+						</Title>
 					</Center>
 
 					<Group w='100%' noWrap>
@@ -183,7 +303,8 @@ const EmployeePage = () => {
 						</Button>
 						<Button
 							fullWidth
-							disabled={updateParcel.isLoading}
+							loading={updateManyParcels.isLoading}
+							disabled={updateManyParcels.isLoading}
 							onClick={confirmHandler}
 						>
 							{updateParcel.isLoading ? <Loader size={'sm'} /> : 'Confirm'}

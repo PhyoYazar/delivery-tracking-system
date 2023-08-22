@@ -80,6 +80,8 @@ export const parcelRouter = createTRPCRouter({
 				finish: z.boolean().optional(),
 				arrived_warehouse: z.boolean().optional(),
 				deliver: z.boolean().optional(),
+				accept_picked_up: z.boolean().optional(),
+				accept_deliver: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {
@@ -106,9 +108,10 @@ export const parcelRouter = createTRPCRouter({
 			z.object({
 				id: z.string(),
 				picked_up: z.boolean().optional(),
+				accept_picked_up: z.boolean().optional(),
 				finish: z.boolean().optional(),
 				arrived_warehouse: z.boolean().optional(),
-				deliver: z.boolean().optional(),
+				accept_deliver: z.boolean().optional(),
 			}),
 		)
 		.mutation(async ({ input, ctx }) => {

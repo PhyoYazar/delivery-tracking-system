@@ -1,5 +1,6 @@
 import {
 	Box,
+	Flex,
 	Table as MantineTable,
 	ScrollArea,
 	createStyles,
@@ -7,9 +8,11 @@ import {
 import {
 	flexRender,
 	getCoreRowModel,
+	getSortedRowModel,
 	useReactTable,
 	type ColumnDef,
 	type RowSelectionState,
+	type SortingState,
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
@@ -65,6 +68,8 @@ export function Table<D>({
 	onSelectedRowsChange,
 }: ITableProps<D>) {
 	const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+	const [sorting, setSorting] = useState<SortingState>([]);
+
 	const router = useRouter();
 	const { classes } = useStyles();
 
@@ -75,8 +80,11 @@ export function Table<D>({
 		data: defaultData,
 		columns: defaultColumns,
 		state: {
+			sorting,
 			rowSelection,
 		},
+		onSortingChange: setSorting,
+		getSortedRowModel: getSortedRowModel(),
 		onRowSelectionChange: setRowSelection,
 		columnResizeMode: 'onChange',
 		getCoreRowModel: getCoreRowModel(),
@@ -132,17 +140,28 @@ export function Table<D>({
 						<tr key={headerGroup.id} style={{ minWidth: 200 }}>
 							{headerGroup.headers.map((header) => (
 								<th key={header.id} colSpan={header.colSpan}>
-									{header.isPlaceholder
-										? null
-										: flexRender(
-												header.column.columnDef.header,
-												header.getContext(),
-										  )}
-									<Box
-										component='div'
-										onMouseDown={header.getResizeHandler()}
-										onTouchStart={header.getResizeHandler()}
-									/>
+									{header.isPlaceholder ? null : (
+										<Box
+											component='div'
+											{...{
+												className: header.column.getCanSort()
+													? 'cursor-pointer select-none'
+													: '',
+												onClick: header.column.getToggleSortingHandler(),
+											}}
+										>
+											<Flex align='center' gap={4}>
+												{{
+													asc: ' 🔼',
+													desc: ' 🔽',
+												}[header.column.getIsSorted() as string] ?? null}
+												{flexRender(
+													header.column.columnDef.header,
+													header.getContext(),
+												)}
+											</Flex>
+										</Box>
+									)}
 								</th>
 							))}
 						</tr>
