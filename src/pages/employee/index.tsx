@@ -41,6 +41,23 @@ const EmployeePage = () => {
 		}
 	}
 
+	const { data: pickerParcelsData, isLoading: pickerParcelIsLoading } =
+		api.parcel.getAllParcels.useQuery(
+			{
+				pickerId: data?.user.id ?? null,
+			},
+			{
+				enabled: !!data?.user.id,
+			},
+		);
+
+	const pickerParcels =
+		!pickerParcelIsLoading &&
+		pickerParcelsData !== 'Error' &&
+		pickerParcelsData !== undefined
+			? pickerParcelsData
+			: [];
+
 	const { data: parcels, isLoading } = api.parcel.getParcelsByUser.useQuery({
 		...obj,
 	});
@@ -136,6 +153,10 @@ const EmployeePage = () => {
 			  )
 			: [];
 
+	const finishParcelsLength = isPicker
+		? pickerParcels.length
+		: finishParcels.length;
+
 	const acceptHandler = (id: string) => {
 		if (id === '') return;
 
@@ -143,6 +164,7 @@ const EmployeePage = () => {
 			id: string;
 			accept_picked_up?: boolean;
 			accept_deliver?: boolean;
+			pickerId?: string;
 		} = {
 			id,
 		};
@@ -151,6 +173,10 @@ const EmployeePage = () => {
 			obj['accept_picked_up'] = true;
 		} else {
 			obj['accept_deliver'] = true;
+		}
+
+		if (data?.user.id) {
+			obj['pickerId'] = data.user.id;
 		}
 
 		updateParcel.mutate(obj);
@@ -284,10 +310,13 @@ const EmployeePage = () => {
 				<Tabs.Panel value='finish' mt={10}>
 					{isLoading ? (
 						<CenterLoader />
-					) : finishParcels.length === 0 ? (
+					) : finishParcelsLength === 0 ? (
 						<Center h={'60svh'}>No Data</Center>
 					) : (
-						<EmployeeParcelTable data={finishParcels} isDeliver={!isPicker} />
+						<EmployeeParcelTable
+							data={isPicker ? pickerParcels : finishParcels}
+							isDeliver={!isPicker}
+						/>
 					)}
 				</Tabs.Panel>
 			</StyledTabs>

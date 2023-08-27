@@ -28,12 +28,11 @@ export const parcelRouter = createTRPCRouter({
 
 	getAllParcels: protectedProcedure
 		.input(
-			z
-				.object({
-					sender_township: z.string().nullable(),
-					receiver_township: z.string().nullable(),
-				})
-				.optional(),
+			z.object({
+				sender_township: z.string().nullable().optional(),
+				receiver_township: z.string().nullable().optional(),
+				pickerId: z.string().nullable().optional(),
+			}),
 		)
 		.query(async ({ input, ctx }) => {
 			const [response, error] = await ctx.api
@@ -116,6 +115,7 @@ export const parcelRouter = createTRPCRouter({
 				picked_up: z.boolean().optional(),
 				accept_picked_up: z.boolean().optional(),
 				finish: z.boolean().optional(),
+				pickerId: z.string().optional(),
 				arrived_warehouse: z.boolean().optional(),
 				accept_deliver: z.boolean().optional(),
 			}),

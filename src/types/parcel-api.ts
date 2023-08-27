@@ -15,6 +15,7 @@ export interface ParcelResponse {
 	finish: boolean;
 	deliver: boolean;
 	accept_deliver: boolean;
+	pickerId: string | null;
 	sender_id: string;
 	sender: Sender;
 	receiver_id: string;
