@@ -45,6 +45,8 @@ const EmployeePage = () => {
 		...obj,
 	});
 
+	const autoAssign = api.parcel.autoAssign.useMutation();
+
 	const updateParcel = api.parcel.updateParcel.useMutation({
 		onSuccess: () => {
 			void utils.parcel.getParcelsByUser.invalidate();
@@ -173,12 +175,14 @@ const EmployeePage = () => {
 	const confirmHandler = () => {
 		if (unfinishParcels.length === 0) return;
 
+		const parcelIds = unfinishParcels.map((p) => p.id);
+
 		const obj: {
 			parcels: string[];
 			arrived_warehouse?: boolean;
 			finish?: boolean;
 		} = {
-			parcels: unfinishParcels.map((p) => p.id),
+			parcels: parcelIds,
 		};
 
 		if (isPicker) {
@@ -188,6 +192,10 @@ const EmployeePage = () => {
 		}
 
 		updateManyParcels.mutate(obj);
+
+		for (const parcelId of parcelIds) {
+			autoAssign.mutate({ id: parcelId, role: 'deliver' });
+		}
 	};
 
 	return (

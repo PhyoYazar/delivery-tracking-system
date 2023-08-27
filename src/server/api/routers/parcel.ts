@@ -1,8 +1,14 @@
+import { TRPCClientError } from '@trpc/client';
 import { TRPCError } from '@trpc/server';
 import { AxiosError } from 'axios';
 import queryString from 'query-string';
 import { z } from 'zod';
-import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
+import {
+	createTRPCRouter,
+	protectedProcedure,
+	publicProcedure,
+} from '~/server/api/trpc';
+import ApiClient from '~/server/apiClient';
 import type { ErrorResponse } from '~/types';
 import type { ApiResponse } from '~/types/api';
 import type { ParcelResponse } from '~/types/parcel-api';
@@ -124,6 +130,28 @@ export const parcelRouter = createTRPCRouter({
 
 			if (response === null || error) {
 				return 'Error';
+			}
+
+			return response.data;
+		}),
+
+	autoAssign: publicProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				role: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const [response, error] = await ApiClient()
+				.patch<ParcelResponse>(`/parcels/auto-assign/${input.id}`, {
+					role: input.role,
+				})
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
+
+			if (response === null || error) {
+				throw new TRPCClientError('Something wrong!');
 			}
 
 			return response.data;
