@@ -7,11 +7,12 @@ import {
 	Select,
 	Stack,
 	Tabs,
+	TextInput,
 	Title,
 } from '@mantine/core';
-import { useDisclosure } from '@mantine/hooks';
+import { useDebouncedValue, useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
-import { IconAlarm, IconCheck } from '@tabler/icons-react';
+import { IconAlarm, IconCheck, IconSearch } from '@tabler/icons-react';
 import { type GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
@@ -20,6 +21,7 @@ import { StyledTabs } from '~/feature/common/CustomTabs';
 import { ParcelTable } from '~/feature/parcel/ParcelTable';
 import type { ParcelResponse } from '~/types';
 import { api } from '~/utils/api';
+import { useTownship } from '~/utils/hooks/useTownship';
 
 export default function Home() {
 	const [activeTab, setActiveTab] = useState<string>('parcels');
@@ -36,6 +38,10 @@ export default function Home() {
 
 	const [deleteId, setDeleteId] = useState('');
 
+	// keyword search state
+	const [keyword, setKeyword] = useState('');
+	const [debounced] = useDebouncedValue(keyword, 200);
+
 	const [opened, { open, close }] = useDisclosure(false);
 	const utils = api.useContext();
 
@@ -45,6 +51,7 @@ export default function Home() {
 		api.parcel.getAllParcels.useQuery({
 			sender_township: senderTownshipValue,
 			receiver_township: receiverTownshipValue,
+			keyword: debounced,
 		});
 
 	const updateParcels = api.parcel.updateParcels.useMutation({
@@ -101,7 +108,7 @@ export default function Home() {
 		api.deliver.getDelivers.useQuery();
 
 	const pickers =
-		!deliverIsLoading && deliver !== 'Error' && deliver !== undefined
+		!deliverIsLoading && deliver !== undefined
 			? deliver
 					.filter((pick) => pick.role === 'picker')
 					.map((picker) => ({
@@ -111,7 +118,7 @@ export default function Home() {
 			: [{ value: '', label: '' }];
 
 	const delivers =
-		!deliverIsLoading && deliver !== 'Error' && deliver !== undefined
+		!deliverIsLoading && deliver !== undefined
 			? deliver
 					.filter((de) => de.role === 'deliver')
 					.map((deli) => ({
@@ -123,11 +130,10 @@ export default function Home() {
 	//*================================================================================================
 
 	// const { data: city } = api.location.getCity.useQuery();
-	const { data: township, isLoading: townshipIsLoading } =
-		api.location.getTownship.useQuery();
+	const { township, townshipIsLoading } = useTownship();
 
 	const townshipData =
-		!townshipIsLoading && township !== 'Error' && township !== undefined
+		!townshipIsLoading && township !== undefined
 			? township.map((town) => ({
 					value: town.name,
 					label: town.name,
@@ -179,40 +185,51 @@ export default function Home() {
 
 	//*================================================================================================
 
-	if (parcelsIsLoading) {
-		return (
-			<Center w='100%' h='70svh'>
-				<Loader />
-			</Center>
-		);
-	}
+	// if (parcelsIsLoading) {
+	// 	return (
+	// 		<Center w='100%' h='70svh'>
+	// 			<Loader />
+	// 		</Center>
+	// 	);
+	// }
 
-	if (parcels === 'Error' || parcels === undefined) {
-		return <div>Error</div>;
-	}
+	// if (parcels === 'Error' || parcels === undefined) {
+	// 	return <div>Error</div>;
+	// }
 
-	const parcelsBooking = parcels.filter(
-		(parcel) =>
-			!parcel.finish &&
-			!parcel.arrived_warehouse &&
-			!parcel.deliver &&
-			!parcel.picked_up,
-	);
+	const parcelIsValid = parcels !== 'Error' && parcels !== undefined;
 
-	const pickUpParcels = parcels.filter(
-		(parcel) =>
-			parcel.picked_up &&
-			!parcel.arrived_warehouse &&
-			!parcel.deliver &&
-			!parcel.finish,
-	);
-	const arrivedWarehouseParcels = parcels.filter(
-		(parcel) => parcel.arrived_warehouse && !parcel.deliver && !parcel.finish,
-	);
-	const deliverParcels = parcels.filter(
-		(parcel) => parcel.deliver && !parcel.finish,
-	);
-	const finishParcels = parcels.filter((parcel) => parcel.finish);
+	const parcelsBooking = parcelIsValid
+		? parcels.filter(
+				(parcel) =>
+					!parcel.finish &&
+					!parcel.arrived_warehouse &&
+					!parcel.deliver &&
+					!parcel.picked_up,
+		  )
+		: [];
+
+	const pickUpParcels = parcelIsValid
+		? parcels.filter(
+				(parcel) =>
+					parcel.picked_up &&
+					!parcel.arrived_warehouse &&
+					!parcel.deliver &&
+					!parcel.finish,
+		  )
+		: [];
+	const arrivedWarehouseParcels = parcelIsValid
+		? parcels.filter(
+				(parcel) =>
+					parcel.arrived_warehouse && !parcel.deliver && !parcel.finish,
+		  )
+		: [];
+	const deliverParcels = parcelIsValid
+		? parcels.filter((parcel) => parcel.deliver && !parcel.finish)
+		: [];
+	const finishParcels = parcelIsValid
+		? parcels.filter((parcel) => parcel.finish)
+		: [];
 
 	return (
 		<>
@@ -242,6 +259,13 @@ export default function Home() {
 						</Tabs.List>
 
 						<Group spacing={10}>
+							<TextInput
+								value={keyword}
+								onChange={(event) => setKeyword(event.currentTarget.value)}
+								icon={<IconSearch size={18} />}
+								placeholder='Search'
+							/>
+
 							{activeTab === 'parcels' && (
 								<Select
 									w={240}
@@ -292,77 +316,85 @@ export default function Home() {
 						</Group>
 					</Group>
 
-					<Tabs.Panel value='parcels' mt={10}>
-						{parcelsBooking.length === 0 ? (
-							<Center w={'100%'} h={'70svh'}>
-								There is no booking parcels.
-							</Center>
-						) : (
-							<ParcelTable
-								tabType='parcels'
-								data={parcelsBooking}
-								getSelectedRows={getSelectedRowsHandler}
-							/>
-						)}
-					</Tabs.Panel>
+					{parcelsIsLoading ? (
+						<Center w='100%' h='70svh'>
+							<Loader />
+						</Center>
+					) : (
+						<>
+							<Tabs.Panel value='parcels' mt={10}>
+								{parcelsBooking.length === 0 ? (
+									<Center w={'100%'} h={'70svh'}>
+										There is no booking parcels.
+									</Center>
+								) : (
+									<ParcelTable
+										tabType='parcels'
+										data={parcelsBooking}
+										getSelectedRows={getSelectedRowsHandler}
+									/>
+								)}
+							</Tabs.Panel>
 
-					<Tabs.Panel value='picked_up' mt={10}>
-						{pickUpParcels.length === 0 ? (
-							<Center w={'100%'} h={'70svh'}>
-								There is no picking up parcels.
-							</Center>
-						) : (
-							<ParcelTable
-								data={pickUpParcels}
-								getSelectedRows={getSelectedRowsHandler}
-							/>
-						)}
-					</Tabs.Panel>
+							<Tabs.Panel value='picked_up' mt={10}>
+								{pickUpParcels.length === 0 ? (
+									<Center w={'100%'} h={'70svh'}>
+										There is no picking up parcels.
+									</Center>
+								) : (
+									<ParcelTable
+										data={pickUpParcels}
+										getSelectedRows={getSelectedRowsHandler}
+									/>
+								)}
+							</Tabs.Panel>
 
-					<Tabs.Panel value='arrived_warehouse' mt={10}>
-						{arrivedWarehouseParcels.length === 0 ? (
-							<Center w={'100%'} h={'70svh'}>
-								There is no parcels at warehouse.
-							</Center>
-						) : (
-							<ParcelTable
-								tabType='warehouse'
-								data={arrivedWarehouseParcels}
-								getSelectedRows={getSelectedRowsHandler}
-							/>
-						)}
-					</Tabs.Panel>
+							<Tabs.Panel value='arrived_warehouse' mt={10}>
+								{arrivedWarehouseParcels.length === 0 ? (
+									<Center w={'100%'} h={'70svh'}>
+										There is no parcels at warehouse.
+									</Center>
+								) : (
+									<ParcelTable
+										tabType='warehouse'
+										data={arrivedWarehouseParcels}
+										getSelectedRows={getSelectedRowsHandler}
+									/>
+								)}
+							</Tabs.Panel>
 
-					<Tabs.Panel value='deliver' mt={10}>
-						{deliverParcels.length === 0 ? (
-							<Center w={'100%'} h={'70svh'}>
-								There is no delivering parcels.
-							</Center>
-						) : (
-							<ParcelTable
-								data={deliverParcels}
-								getSelectedRows={getSelectedRowsHandler}
-							/>
-						)}
-					</Tabs.Panel>
+							<Tabs.Panel value='deliver' mt={10}>
+								{deliverParcels.length === 0 ? (
+									<Center w={'100%'} h={'70svh'}>
+										There is no delivering parcels.
+									</Center>
+								) : (
+									<ParcelTable
+										data={deliverParcels}
+										getSelectedRows={getSelectedRowsHandler}
+									/>
+								)}
+							</Tabs.Panel>
 
-					<Tabs.Panel value='finish' mt={10}>
-						{finishParcels.length === 0 ? (
-							<Center w={'100%'} h={'70svh'}>
-								There is no parcels that finished.
-							</Center>
-						) : (
-							<ParcelTable
-								tabType='finish'
-								data={finishParcels}
-								getSelectedRows={getSelectedRowsHandler}
-								deleteHandler={(id: string) => {
-									setDeleteId(id);
-									open();
-								}}
-							/>
-						)}
-					</Tabs.Panel>
+							<Tabs.Panel value='finish' mt={10}>
+								{finishParcels.length === 0 ? (
+									<Center w={'100%'} h={'70svh'}>
+										There is no parcels that finished.
+									</Center>
+								) : (
+									<ParcelTable
+										tabType='finish'
+										data={finishParcels}
+										getSelectedRows={getSelectedRowsHandler}
+										deleteHandler={(id: string) => {
+											setDeleteId(id);
+											open();
+										}}
+									/>
+								)}
+							</Tabs.Panel>
+						</>
+					)}
 				</StyledTabs>
 			</Stack>
 

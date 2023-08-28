@@ -1,3 +1,4 @@
+import { TRPCClientError } from '@trpc/client';
 import { createTRPCRouter, protectedProcedure } from '~/server/api/trpc';
 import ApiClient from '~/server/apiClient';
 import type { City, Township } from '~/types';
@@ -23,7 +24,7 @@ export const locationRouter = createTRPCRouter({
 			.catch((e: unknown) => [null, e] as const);
 
 		if (response === null || error) {
-			return 'Error';
+			throw new TRPCClientError('Something wrong');
 		}
 
 		return response.data;

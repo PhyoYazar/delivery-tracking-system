@@ -32,6 +32,7 @@ export const parcelRouter = createTRPCRouter({
 				sender_township: z.string().nullable().optional(),
 				receiver_township: z.string().nullable().optional(),
 				pickerId: z.string().nullable().optional(),
+				keyword: z.string().optional(),
 			}),
 		)
 		.query(async ({ input, ctx }) => {
