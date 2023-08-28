@@ -156,4 +156,23 @@ export const parcelRouter = createTRPCRouter({
 
 			return response.data;
 		}),
+
+	deleteParcel: protectedProcedure
+		.input(
+			z.object({
+				id: z.string(),
+			}),
+		)
+		.mutation(async ({ input, ctx }) => {
+			const [response, error] = await ctx.api
+				.delete<ParcelResponse[]>(`/parcels/${input.id}`)
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
+
+			if (response === null || error) {
+				return 'Error';
+			}
+
+			return response.data;
+		}),
 });

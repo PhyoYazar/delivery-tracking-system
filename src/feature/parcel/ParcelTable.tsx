@@ -1,5 +1,10 @@
-import { Box } from '@mantine/core';
-import { IconCircleCheck, IconCircleCheckFilled } from '@tabler/icons-react';
+import { ActionIcon, Box, Menu } from '@mantine/core';
+import {
+	IconCircleCheck,
+	IconCircleCheckFilled,
+	IconDotsVertical,
+	IconTrash,
+} from '@tabler/icons-react';
 import { type ColumnDef } from '@tanstack/table-core';
 import { useMemo } from 'react';
 import type { ParcelResponse } from '~/types/parcel-api';
@@ -10,13 +15,14 @@ interface ParcelProps {
 	data: ParcelResponse[];
 	getSelectedRows: (val: ParcelResponse[]) => void;
 	tabType?: string;
+	deleteHandler?: (id: string) => void;
 }
 
 export const ParcelTable = (props: ParcelProps) => {
-	const { data, getSelectedRows, tabType } = props;
+	const { data, getSelectedRows, deleteHandler, tabType } = props;
 
-	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(() => {
-		const columns: ColumnDef<ParcelResponse>[] = [
+	const defaultColumns: ColumnDef<ParcelResponse>[] = useMemo(
+		() => [
 			// {
 			// 	// TODO: checkbox accessorKey should be "id"
 			// 	accessorKey: 'id',
@@ -63,16 +69,34 @@ export const ParcelTable = (props: ParcelProps) => {
 				header: () => <TableTextBox>Parcel Name</TableTextBox>,
 			},
 			{
+				id: 'description',
+				accessorFn: (row) => row.description,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Description</TableTextBox>,
+			},
+			{
 				id: 'sender_name',
 				accessorFn: (row) => row.sender.name,
 				cell: (info) => info.getValue(),
 				header: () => <TableTextBox>Sender Name</TableTextBox>,
 			},
 			{
+				id: 'sender_ph_number',
+				accessorFn: (row) => row.sender.phone_number,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Sender Phone</TableTextBox>,
+			},
+			{
 				id: 'receiver_name',
 				accessorFn: (row) => row.receiver.name,
 				cell: (info) => info.getValue(),
 				header: () => <TableTextBox>Receiver Name</TableTextBox>,
+			},
+			{
+				id: 'receiver_ph_number',
+				accessorFn: (row) => row.receiver.phone_number,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Receiver Phone</TableTextBox>,
 			},
 			// {
 			// 	id: 'price',
@@ -97,10 +121,9 @@ export const ParcelTable = (props: ParcelProps) => {
 			// 	accessorFn: (row) => row.user.,
 			// 	header: () => 'Deliver',
 			// },
-		];
-
-		return columns;
-	}, []);
+		],
+		[],
+	);
 
 	let columns;
 
@@ -136,6 +159,37 @@ export const ParcelTable = (props: ParcelProps) => {
 		];
 
 		columns = [...defaultColumns, ...acceptIcon];
+	} else if (tabType === 'finish') {
+		const deleteButton: ColumnDef<ParcelResponse>[] = [
+			{
+				accessorKey: 'action_id',
+				header: () => <TableTextBox w={50}>Action</TableTextBox>,
+				accessorFn: (row) => row.id,
+				cell: ({ getValue }) => (
+					<Menu withinPortal shadow='md' width={150}>
+						<Menu.Target>
+							<ActionIcon radius={'xl'}>
+								<IconDotsVertical />
+							</ActionIcon>
+						</Menu.Target>
+
+						<Menu.Dropdown>
+							<Menu.Item
+								icon={<IconTrash size={14} />}
+								onClick={(e) => {
+									e.stopPropagation();
+									deleteHandler?.(getValue() as string);
+								}}
+							>
+								Delete
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
+				),
+			},
+		];
+
+		columns = [...defaultColumns, ...deleteButton];
 	} else {
 		columns = [...defaultColumns];
 	}

@@ -73,10 +73,23 @@ export const EmployeeParcelTable = (props: ParcelProps) => {
 				header: () => <TableTextBox>Parcel Name</TableTextBox>,
 			},
 			{
+				id: 'description',
+				accessorFn: (row) => row.description,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Description</TableTextBox>,
+			},
+			{
 				id: 'customer_name',
 				accessorFn: (row) => (isDeliver ? row.receiver.name : row.sender.name),
 				cell: (info) => info.getValue(),
 				header: () => <TableTextBox>Customer Name</TableTextBox>,
+			},
+			{
+				id: 'customer_phone',
+				accessorFn: (row) =>
+					isDeliver ? row.receiver.phone_number : row.sender.phone_number,
+				cell: (info) => info.getValue(),
+				header: () => <TableTextBox>Customer Phone</TableTextBox>,
 			},
 			{
 				accessorKey: 'address',

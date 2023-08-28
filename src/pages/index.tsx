@@ -1,7 +1,18 @@
-import { Center, Group, Loader, Select, Stack, Tabs } from '@mantine/core';
+import {
+	Button,
+	Center,
+	Group,
+	Loader,
+	Modal,
+	Select,
+	Stack,
+	Tabs,
+	Title,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { IconAlarm, IconCheck } from '@tabler/icons-react';
-import { GetServerSidePropsContext } from 'next';
+import { type GetServerSidePropsContext } from 'next';
 import { getSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useCallback, useState } from 'react';
@@ -23,6 +34,9 @@ export default function Home() {
 
 	const [selectedRowsIds, setSelectedRowsIds] = useState<string[]>([]);
 
+	const [deleteId, setDeleteId] = useState('');
+
+	const [opened, { open, close }] = useDisclosure(false);
 	const utils = api.useContext();
 
 	//*================================================================================================
@@ -48,6 +62,31 @@ export default function Home() {
 		onError: () => {
 			notifications.show({
 				message: 'Failed to update. Please try again',
+				icon: <IconAlarm size='1rem' />,
+				autoClose: true,
+				withCloseButton: true,
+				color: 'red',
+			});
+		},
+	});
+
+	const deleteParcel = api.parcel.deleteParcel.useMutation({
+		onSuccess: () => {
+			void utils.parcel.getAllParcels.invalidate();
+
+			notifications.show({
+				message: 'Parcel is successfully deleted!',
+				icon: <IconCheck size='1rem' />,
+				autoClose: true,
+				withCloseButton: true,
+				color: 'green',
+			});
+
+			close();
+		},
+		onError: () => {
+			notifications.show({
+				message: 'Failed to delete. Please try again',
 				icon: <IconAlarm size='1rem' />,
 				autoClose: true,
 				withCloseButton: true,
@@ -100,6 +139,12 @@ export default function Home() {
 	const getSelectedRowsHandler = useCallback((value: ParcelResponse[]) => {
 		setSelectedRowsIds(value.map((val) => val.id));
 	}, []);
+
+	const deleteHandler = () => {
+		if (deleteId === '') return;
+
+		deleteParcel.mutate({ id: deleteId });
+	};
 
 	const assignHandler = () => {
 		if (selectedRowsIds.length === 0) {
@@ -308,13 +353,46 @@ export default function Home() {
 							</Center>
 						) : (
 							<ParcelTable
+								tabType='finish'
 								data={finishParcels}
 								getSelectedRows={getSelectedRowsHandler}
+								deleteHandler={(id: string) => {
+									setDeleteId(id);
+									open();
+								}}
 							/>
 						)}
 					</Tabs.Panel>
 				</StyledTabs>
 			</Stack>
+
+			<Modal opened={opened} onClose={close} centered>
+				<Stack spacing={40}>
+					<Center>
+						<Title color='red.7'>Are you sure to delete the parcel?</Title>
+					</Center>
+
+					<Group w='100%' noWrap>
+						<Button
+							color='gray'
+							fullWidth
+							variant='outline'
+							disabled={deleteParcel.isLoading}
+							onClick={close}
+						>
+							Cancel
+						</Button>
+						<Button
+							color='red'
+							fullWidth
+							disabled={deleteParcel.isLoading}
+							onClick={deleteHandler}
+						>
+							{deleteParcel.isLoading ? <Loader size={'sm'} /> : 'Delete'}
+						</Button>
+					</Group>
+				</Stack>
+			</Modal>
 		</>
 	);
 }
