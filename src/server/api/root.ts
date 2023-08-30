@@ -5,6 +5,7 @@ import { customerRouter } from './routers/customer';
 import { deliverRouter } from './routers/deliver';
 import { locationRouter } from './routers/location';
 import { parcelRouter } from './routers/parcel';
+import { timelineRouter } from './routers/timeline';
 import { userRouter } from './routers/user';
 
 /**
@@ -20,6 +21,7 @@ export const appRouter = createTRPCRouter({
 	deliver: deliverRouter,
 	customer: customerRouter,
 	user: userRouter,
+	timeline: timelineRouter,
 });
 
 // export type definition of API

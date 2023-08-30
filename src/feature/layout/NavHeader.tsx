@@ -1,4 +1,5 @@
 import {
+	Badge,
 	Box,
 	Flex,
 	Group,
@@ -20,40 +21,44 @@ export const NavHeader = () => {
 		<Flex h='100%' align='center' justify={'space-between'}>
 			<Box>
 				<Title order={3} color='gray.8'>
-					Delivery Tracking System
+					Delivery Service System
 				</Title>
 			</Box>
 
-			<Menu shadow='md' width={260} position='bottom-end'>
-				<Menu.Target>
-					<Group spacing={10} sx={{ cursor: 'pointer' }}>
-						<IconUserCircle size={28} color={theme.colors.gray[6]} />
-						<Text fw={500} fz={'sm'} c='gray.6'>
-							{data?.user.name}
-						</Text>
-					</Group>
-				</Menu.Target>
+			<Group spacing={10}>
+				<Badge>{data?.user.role}</Badge>
 
-				<Menu.Dropdown>
-					<Menu.Divider />
+				<Menu shadow='md' width={260} position='bottom-end'>
+					<Menu.Target>
+						<Group spacing={10} sx={{ cursor: 'pointer' }}>
+							<IconUserCircle size={28} color={theme.colors.gray[6]} />
+							<Text fw={500} fz={'sm'} c='gray.6'>
+								{data?.user.name}
+							</Text>
+						</Group>
+					</Menu.Target>
 
-					<Menu.Label>Account Settings</Menu.Label>
-					<Menu.Item
-						color='gray.9'
-						icon={<IconUserCircle size={20} />}
-						onClick={() => void router.push('/profile')}
-					>
-						Profile
-					</Menu.Item>
-					<Menu.Item
-						color='red'
-						icon={<IconLogout size={20} />}
-						onClick={() => void signOut()}
-					>
-						Logout
-					</Menu.Item>
-				</Menu.Dropdown>
-			</Menu>
+					<Menu.Dropdown>
+						<Menu.Divider />
+
+						<Menu.Label>Account Settings</Menu.Label>
+						<Menu.Item
+							color='gray.9'
+							icon={<IconUserCircle size={20} />}
+							onClick={() => void router.push('/profile')}
+						>
+							Profile
+						</Menu.Item>
+						<Menu.Item
+							color='red'
+							icon={<IconLogout size={20} />}
+							onClick={() => void signOut()}
+						>
+							Logout
+						</Menu.Item>
+					</Menu.Dropdown>
+				</Menu>
+			</Group>
 		</Flex>
 	);
 };

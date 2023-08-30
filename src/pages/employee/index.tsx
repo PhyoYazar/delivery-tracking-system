@@ -87,9 +87,33 @@ const EmployeePage = () => {
 		},
 	});
 
+	const createTimeline = api.timeline.createParcel.useMutation();
+
 	const updateManyParcels = api.parcel.updateParcels.useMutation({
-		onSuccess: () => {
+		onSuccess: (resp) => {
 			void utils.parcel.getParcelsByUser.invalidate();
+
+			if (resp?.status === 'success') {
+				resp?.data.forEach(
+					({ id, picked_up, arrived_warehouse, deliver, finish }) => {
+						let type = '';
+
+						if (picked_up && !arrived_warehouse && !deliver && !finish) {
+							type = 'start_pick_up';
+						} else if (arrived_warehouse && !deliver && !finish) {
+							type = 'arrive_warehouse';
+						} else if (deliver && !finish) {
+							type = 'start_deliver';
+						} else if (finish) {
+							type = 'finish';
+						}
+
+						if (type !== '') {
+							createTimeline.mutate({ type, parcel_id: id });
+						}
+					},
+				);
+			}
 
 			notifications.show({
 				message: 'Success!',
