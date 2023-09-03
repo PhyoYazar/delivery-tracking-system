@@ -6,7 +6,7 @@ import { useRouter } from 'next/router';
 const adminNavigationItems = [
 	{ href: '/', label: 'Parcels', icon: IconUserSearch },
 	{ href: '/customers', label: 'Customers', icon: IconUsers },
-	{ href: '/deliver-employee', label: 'Delivery Info', icon: IconUsers },
+	{ href: '/deliver-info', label: 'Delivery Info', icon: IconUsers },
 ];
 
 export const NavSidebar = () => {

@@ -320,7 +320,7 @@ const EmployeePage = () => {
 							showAction
 							data={accept_parcels}
 							acceptHandler={acceptHandler}
-							isDeliver={false}
+							isDeliver={!Picker}
 						/>
 					)}
 				</Tabs.Panel>
