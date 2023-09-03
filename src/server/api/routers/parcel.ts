@@ -158,6 +158,28 @@ export const parcelRouter = createTRPCRouter({
 			return response.data;
 		}),
 
+	autoAssignSchedule: publicProcedure
+		.input(
+			z.object({
+				id: z.string(),
+				role: z.string(),
+			}),
+		)
+		.mutation(async ({ input }) => {
+			const [response, error] = await ApiClient()
+				.patch<ParcelResponse>(`/parcels/auto-assign/schedule/${input.id}`, {
+					role: input.role,
+				})
+				.then((res) => [res, null] as const)
+				.catch((e: unknown) => [null, e] as const);
+
+			if (response === null || error) {
+				throw new TRPCClientError('Something wrong!');
+			}
+
+			return response.data;
+		}),
+
 	deleteParcel: protectedProcedure
 		.input(
 			z.object({

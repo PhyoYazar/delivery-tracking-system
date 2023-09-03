@@ -63,6 +63,7 @@ const EmployeePage = () => {
 	});
 
 	const autoAssign = api.parcel.autoAssign.useMutation();
+	const autoAssignSchedule = api.parcel.autoAssignSchedule.useMutation();
 
 	const updateParcel = api.parcel.updateParcel.useMutation({
 		onSuccess: () => {
@@ -243,8 +244,11 @@ const EmployeePage = () => {
 
 		updateManyParcels.mutate(obj);
 
-		for (const parcelId of parcelIds) {
-			autoAssign.mutate({ id: parcelId, role: 'deliver' });
+		if (isPicker) {
+			for (const parcelId of parcelIds) {
+				autoAssign.mutate({ id: parcelId, role: 'deliver' });
+				autoAssignSchedule.mutate({ id: parcelId, role: 'deliver' });
+			}
 		}
 	};
 
