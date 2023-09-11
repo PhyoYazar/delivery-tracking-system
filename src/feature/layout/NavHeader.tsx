@@ -13,14 +13,23 @@ import { signOut, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 export const NavHeader = () => {
+	const session = useSession();
 	const router = useRouter();
 	const theme = useMantineTheme();
 	const { data } = useSession();
 
+	const isAdmin = session.data?.user.role === 'admin';
+
 	return (
-		<Flex h='100%' align='center' justify={'space-between'}>
+		<Flex
+			h='100%'
+			align='center'
+			justify={'space-between'}
+			bg={isAdmin ? 'blue.3' : 'green.2'}
+			px={28}
+		>
 			<Box>
-				<Title order={3} color='gray.8'>
+				<Title order={3} color={isAdmin ? 'white' : 'gray.8'}>
 					Delivery Service System
 				</Title>
 			</Box>
@@ -31,8 +40,8 @@ export const NavHeader = () => {
 				<Menu shadow='md' width={260} position='bottom-end'>
 					<Menu.Target>
 						<Group spacing={10} sx={{ cursor: 'pointer' }}>
-							<IconUserCircle size={28} color={theme.colors.gray[6]} />
-							<Text fw={500} fz={'sm'} c='gray.6'>
+							<IconUserCircle size={28} color={theme.colors.gray[7]} />
+							<Text fw={500} fz={'sm'} c={isAdmin ? 'white' : 'gray.8'}>
 								{data?.user.name}
 							</Text>
 						</Group>

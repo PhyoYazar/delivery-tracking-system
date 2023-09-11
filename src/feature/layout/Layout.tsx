@@ -28,7 +28,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
 				)
 			}
 			header={
-				<Header height={headerLayoutHeight} px={28}>
+				<Header height={headerLayoutHeight}>
 					<NavHeader />
 				</Header>
 			}
